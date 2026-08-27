@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-smooth {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marqueeScroll 28s linear infinite;
+}
+
+.animate-marquee-smooth:hover,
+.group-marquee:hover .animate-marquee-smooth {
+  animation-play-state: paused;
+}
+

@@ -1,0 +1,6 @@
+{
+  "name": "AL KHALIL CYBER CENTRE",
+  "description": "Official Business Website for AL KHALIL CYBER CENTRE - Digital Services, CSC, Jan Seva Kendra, Printing, Photography, Online Applications & Customer Work Tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
