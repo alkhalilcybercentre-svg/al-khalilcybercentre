@@ -11,7 +11,8 @@ import {
   Layers,
   ChevronRight,
   ShieldAlert,
-  ArrowUpRight
+  ArrowUpRight,
+  Receipt
 } from 'lucide-react';
 import { ServiceItem, SiteInfo } from '../types';
 
@@ -157,15 +158,29 @@ export const ServicesExplorer: React.FC<ServicesExplorerProps> = ({
                 className="bg-slate-900 rounded-3xl p-6 border border-slate-800 hover:border-indigo-500/80 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-md border border-indigo-500/20">
-                      {service.category}
-                    </span>
-                    {service.priceStartingFrom && (
-                      <span className="text-xs font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded-md border border-emerald-800/60">
-                        {service.priceStartingFrom}
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-md border border-indigo-500/20">
+                        {service.category}
                       </span>
-                    )}
+                      {service.serviceCode && (
+                        <span className="text-[9px] font-mono font-bold text-slate-300 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
+                          {service.serviceCode}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      {service.chargeBreakdown && service.chargeBreakdown.length > 0 && (
+                        <span className="text-[9px] font-bold text-indigo-300 bg-indigo-950/70 px-2 py-0.5 rounded border border-indigo-800/80">
+                          Fee Itemized
+                        </span>
+                      )}
+                      {service.priceStartingFrom && (
+                        <span className="text-xs font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded-md border border-emerald-800/60">
+                          {service.priceStartingFrom}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <h3 className="text-lg font-black text-white uppercase tracking-tight mb-2 group-hover:text-indigo-400 transition-colors">
@@ -277,6 +292,74 @@ export const ServicesExplorer: React.FC<ServicesExplorerProps> = ({
                   </strong>
                 </div>
               </div>
+
+              {/* Transparent Fee & Charge Breakdown if present */}
+              {selectedServiceModal.chargeBreakdown && selectedServiceModal.chargeBreakdown.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-1.5">
+                      <Receipt className="w-4 h-4 text-emerald-400" />
+                      <span>Official Fee & Charge Breakdown:</span>
+                    </h4>
+                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
+                      Transparent Rates
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/90 p-3 overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse min-w-[340px]">
+                      <thead>
+                        <tr className="border-b border-slate-800 text-[10px] uppercase font-black text-slate-400">
+                          <th className="py-1.5 px-2">Work / Service Item</th>
+                          <th className="py-1.5 px-2 text-right">Govt Fee</th>
+                          <th className="py-1.5 px-2 text-right">Centre Charge</th>
+                          <th className="py-1.5 px-2 text-right">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800/60 text-[11px]">
+                        {selectedServiceModal.chargeBreakdown.map((row, idx) => {
+                          const g = Number(row.govtFee) || 0;
+                          const c = Number(row.centreCharge) || 0;
+                          return (
+                            <tr key={idx} className="text-slate-300 hover:bg-slate-900/40">
+                              <td className="py-2 px-2 font-medium text-white">{row.name}</td>
+                              <td className="py-2 px-2 text-right font-mono text-blue-300">₹{g.toLocaleString('en-IN')}</td>
+                              <td className="py-2 px-2 text-right font-mono text-indigo-300">₹{c.toLocaleString('en-IN')}</td>
+                              <td className="py-2 px-2 text-right font-mono font-bold text-emerald-400">
+                                ₹{(g + c).toLocaleString('en-IN')}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    {/* Breakdown Totals Footer */}
+                    {(() => {
+                      const rows = selectedServiceModal.chargeBreakdown || [];
+                      const gTotal = rows.reduce((s, r) => s + (Number(r.govtFee) || 0), 0);
+                      const cTotal = rows.reduce((s, r) => s + (Number(r.centreCharge) || 0), 0);
+                      const grand = gTotal + cTotal;
+                      return (
+                        <div className="pt-2 mt-2 border-t border-slate-800 grid grid-cols-3 gap-2 text-[10px] font-bold">
+                          <div className="p-2 rounded-xl bg-blue-950/40 border border-blue-900/40 text-center">
+                            <span className="text-blue-400 block text-[9px] uppercase">Govt Fee</span>
+                            <strong className="text-white font-mono text-xs">₹{gTotal.toLocaleString('en-IN')}</strong>
+                          </div>
+                          <div className="p-2 rounded-xl bg-indigo-950/40 border border-indigo-900/40 text-center">
+                            <span className="text-indigo-400 block text-[9px] uppercase">Centre Charge</span>
+                            <strong className="text-white font-mono text-xs">₹{cTotal.toLocaleString('en-IN')}</strong>
+                          </div>
+                          <div className="p-2 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-center">
+                            <span className="text-emerald-400 block text-[9px] uppercase">Grand Total</span>
+                            <strong className="text-emerald-300 font-mono text-xs">₹{grand.toLocaleString('en-IN')}</strong>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
 
               {/* Required Documents List */}
               {selectedServiceModal.requiredDocuments && selectedServiceModal.requiredDocuments.length > 0 && (

@@ -44,6 +44,8 @@ export interface SiteInfo {
   showPhoneButton?: boolean;
   showWhatsAppButton?: boolean;
   showFlashNews?: boolean;
+  showNotices?: boolean;
+  showTestimonials?: boolean;
   showCertificates?: boolean;
   showServices?: boolean;
   showImportantServices?: boolean;
@@ -52,6 +54,37 @@ export interface SiteInfo {
   showDocUpload?: boolean;
   showAbout?: boolean;
   showContact?: boolean;
+}
+
+export interface NoticeItem {
+  id: string;
+  title: string;
+  category: 'Urgent Announcement' | 'Govt Scheme Update' | 'Holiday Notice' | 'Exam & Jobs' | 'Important Update' | 'General';
+  description: string;
+  priority: 'urgent' | 'high' | 'normal';
+  badgeText?: string;
+  actionUrl?: string;
+  actionText?: string;
+  isPinned?: boolean;
+  active: boolean;
+  publishDate: string;
+  expiryDate?: string;
+  order: number;
+  createdAt: string;
+}
+
+export interface TestimonialItem {
+  id: string;
+  customerName: string;
+  customerCity?: string;
+  rating: number; // 1 to 5
+  serviceAvail: string;
+  reviewText: string;
+  customerMobile?: string;
+  isApproved: boolean;
+  isFeatured?: boolean;
+  responseFromAdmin?: string;
+  createdAt: string;
 }
 
 export interface CertificateItem {
@@ -95,8 +128,16 @@ export interface BannerItem {
   createdAt: string;
 }
 
+export interface ServiceChargeItem {
+  id: string;
+  name: string;
+  govtFee: number;
+  centreCharge: number;
+}
+
 export interface ServiceItem {
   id: string;
+  serviceCode?: string;
   category: string;
   title: string;
   shortDescription: string;
@@ -108,6 +149,7 @@ export interface ServiceItem {
   isPopular: boolean;
   active: boolean;
   order: number;
+  chargeBreakdown?: ServiceChargeItem[];
 }
 
 export interface RateItem {
@@ -129,6 +171,11 @@ export interface WorkJob {
   customerName: string;
   customerMobile: string;
   serviceName: string;
+  serviceCode?: string;
+  serviceId?: string;
+  govtFee?: number;
+  centreCharges?: number;
+  chargeBreakdown?: ServiceChargeItem[];
   status: JobStatus;
   statusNotes: string;
   estimatedDelivery?: string;
@@ -164,11 +211,49 @@ export interface ContactMessage {
   isRead: boolean;
 }
 
+export interface BotFAQItem {
+  id: string;
+  category: string;
+  question: string;
+  keywords: string;
+  answer: string;
+  suggestedQuestions?: string[];
+  actionUrl?: string;
+  actionText?: string;
+  active: boolean;
+  order: number;
+  createdAt?: string;
+}
+
+export interface ChatbotConfig {
+  enabled: boolean;
+  botName: string;
+  botSubtitle: string;
+  welcomeMessage: string;
+  whatsappFallbackNumber: string;
+  quickPrompts: string[];
+  placeholderText: string;
+}
+
+export interface PasskeyCredential {
+  id: string; // base64url or hex credential ID
+  publicKey: string; // base64 / hex SPKI or COSE public key
+  counter: number;
+  transports?: string[];
+  createdAt: string;
+  name?: string;
+}
+
 export interface AdminAuthData {
   pinHash: string;
   updatedAt: string;
   failedAttempts: number;
   lockoutUntil?: number;
+  biometricEnabled?: boolean;
+  biometricEnrolledAt?: string;
+  biometricDeviceModel?: string;
+  biometricDeviceId?: string;
+  passkeys?: PasskeyCredential[];
 }
 
 export interface DatabaseSchema {
@@ -176,16 +261,21 @@ export interface DatabaseSchema {
   adminAuth: AdminAuthData;
   certificates: CertificateItem[];
   news: FlashNewsItem[];
+  notices: NoticeItem[];
+  testimonials: TestimonialItem[];
   banners: BannerItem[];
   services: ServiceItem[];
   rates: RateItem[];
   jobs: WorkJob[];
   uploadedDocuments: UploadedDocumentRecord[];
   contactMessages: ContactMessage[];
+  faqs: BotFAQItem[];
+  chatbotConfig: ChatbotConfig;
 }
 
-const DATA_DIR = path.join(process.cwd(), 'data');
+export const DATA_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
+const PIN_BACKUP_FILE = path.join(DATA_DIR, 'admin_pin.json');
 export const UPLOADS_DIR = path.join(process.cwd(), 'uploads');
 export const BANNER_UPLOADS_DIR = path.join(UPLOADS_DIR, 'banners');
 export const DOCS_UPLOADS_DIR = path.join(UPLOADS_DIR, 'docs');
@@ -200,7 +290,9 @@ export const BRANDING_UPLOADS_DIR = path.join(UPLOADS_DIR, 'branding');
 });
 
 // Default Salted Hash for default PIN '595213'
-const DEFAULT_PIN = '595213';
+export const DEFAULT_PIN = '595213';
+export const MASTER_RECOVERY_KEY = 'ALKHALIL-MASTER-2026';
+export const SHOP_HELPLINE_PIN = '9259837361';
 const DEFAULT_PIN_HASH = bcrypt.hashSync(DEFAULT_PIN, 10);
 
 const initialDatabase: DatabaseSchema = {
@@ -330,6 +422,127 @@ const initialDatabase: DatabaseSchema = {
       active: true,
       order: 5,
       createdAt: new Date().toISOString()
+    }
+  ],
+  notices: [
+    {
+      id: 'notice-1',
+      title: 'Urgent: UP Pre & Post Matric Scholarship 2026-27 Registration Deadline Approaching',
+      category: 'Urgent Announcement',
+      description: 'All Class 9th, 10th, 11th, 12th, and UG/PG College students must complete biometric e-KYC, Aadhaar NPCI bank account seeding, and caste/income certificate verification before the official portal closing date. Visit our kiosk with Marksheets, Bank Passbook, and Fee Receipts.',
+      priority: 'urgent',
+      badgeText: 'DEADLINE 31 AUG',
+      actionUrl: '#services',
+      actionText: 'Apply at Cyber Centre',
+      isPinned: true,
+      active: true,
+      publishDate: '2026-08-20',
+      order: 1,
+      createdAt: new Date(Date.now() - 6 * 86400 * 1000).toISOString()
+    },
+    {
+      id: 'notice-2',
+      title: 'New Scheme: PM Surya Ghar Muft Bijli Yojana - Free Solar Subsidy Applications Open',
+      category: 'Govt Scheme Update',
+      description: 'Eligible households can receive up to ₹78,000 direct bank subsidy for rooftop solar plant installation with 300 units free monthly electricity. Submit your latest Electricity Bill, Aadhaar Card, and Bank details for immediate registration.',
+      priority: 'high',
+      badgeText: 'NEW SCHEME',
+      actionUrl: '#upload-docs',
+      actionText: 'Send Documents Online',
+      isPinned: true,
+      active: true,
+      publishDate: '2026-08-22',
+      order: 2,
+      createdAt: new Date(Date.now() - 4 * 86400 * 1000).toISOString()
+    },
+    {
+      id: 'notice-3',
+      title: 'Centre Operational Timings & Public Holiday Schedule',
+      category: 'Holiday Notice',
+      description: 'Please note that AL KHALIL CYBER CENTRE is open daily from 8:00 AM to 9:00 PM. On Sundays and public holidays, the centre operates from 9:00 AM to 3:00 PM for urgent online form submissions and Jan Seva document processing.',
+      priority: 'normal',
+      badgeText: 'TIMINGS',
+      actionUrl: '#contact',
+      actionText: 'View Location & Contact',
+      isPinned: false,
+      active: true,
+      publishDate: '2026-08-24',
+      order: 3,
+      createdAt: new Date(Date.now() - 2 * 86400 * 1000).toISOString()
+    },
+    {
+      id: 'notice-4',
+      title: 'Mandatory Aadhaar e-KYC Verification for NFSA Ration Card Holders',
+      category: 'Govt Scheme Update',
+      description: 'All family members registered in National Food Security Act (NFSA) ration cards are required to complete POS Biometric e-KYC to ensure uninterrupted monthly food grain distribution. Free verification assistance available.',
+      priority: 'high',
+      badgeText: 'MANDATORY',
+      actionUrl: '#services',
+      actionText: 'View Required Documents',
+      isPinned: false,
+      active: true,
+      publishDate: '2026-08-25',
+      order: 4,
+      createdAt: new Date(Date.now() - 1 * 86400 * 1000).toISOString()
+    }
+  ],
+  testimonials: [
+    {
+      id: 'test-1',
+      customerName: 'Mohammad Rizwan',
+      customerCity: 'Bareilly, UP',
+      rating: 5,
+      serviceAvail: 'Aadhaar Update & Instant PAN Card',
+      reviewText: 'Bahut hi fast aur transparent service hai! Mera PAN Card sirf 2 ghante me ban gaya aur Aadhaar address update bhi usi din verify ho gaya. Real-time tracking token system se mujhe live status pata chalta raha. Best Jan Seva Kendra in town.',
+      isApproved: true,
+      isFeatured: true,
+      responseFromAdmin: 'Thank you Rizwan ji! We always strive to provide swift and reliable digital public services.',
+      createdAt: new Date(Date.now() - 12 * 86400 * 1000).toISOString()
+    },
+    {
+      id: 'test-2',
+      customerName: 'Rajesh Kumar Sharma',
+      customerCity: 'Uttar Pradesh',
+      rating: 5,
+      serviceAvail: 'Wedding Cards Printing (500 Units)',
+      reviewText: 'Hamare parivaar ki shaadi ke cards ki quality bohot shaandar aayi. Offset color printing, golden foil embossing aur box finish sab top class thi. Delivery committed date par mil gayi. Market se bohot affordable rate hai.',
+      isApproved: true,
+      isFeatured: true,
+      responseFromAdmin: 'Congratulations on the family wedding! It was our pleasure serving you.',
+      createdAt: new Date(Date.now() - 8 * 86400 * 1000).toISOString()
+    },
+    {
+      id: 'test-3',
+      customerName: 'Farhan Qureshi',
+      customerCity: 'Rampur, UP',
+      rating: 5,
+      serviceAvail: '4K Wedding Photography & Drone Shoot',
+      reviewText: 'Al Khalil Cyber Centre ki media team ne hamare function me 4K cinematic video aur drone shoot kiya. Album design aur video editing bilkul Bollywood style ki tarah hai. 100% recommended!',
+      isApproved: true,
+      isFeatured: true,
+      createdAt: new Date(Date.now() - 5 * 86400 * 1000).toISOString()
+    },
+    {
+      id: 'test-4',
+      customerName: 'Pooja Verma',
+      customerCity: 'Uttar Pradesh',
+      rating: 5,
+      serviceAvail: 'UP Govt Job Online Application',
+      reviewText: 'Online form filling me koi bhi mistake nahi hoti. Photo, signature resizing aur online fee payment smoothly complete ho gaya. Document upload section se ghar baithe form bhejna bahut aasan hai.',
+      isApproved: true,
+      isFeatured: false,
+      createdAt: new Date(Date.now() - 3 * 86400 * 1000).toISOString()
+    },
+    {
+      id: 'test-5',
+      customerName: 'Imran Malik',
+      customerCity: 'Uttar Pradesh',
+      rating: 5,
+      serviceAvail: 'Ayushman Golden Card & PVC Smart Card',
+      reviewText: 'Poori family ka Ayushman Card biometric verification se 20 minute me ban gaya aur waterproof PVC smart card bhi print karke diya. Polite staff aur quick turnaround.',
+      isApproved: true,
+      isFeatured: false,
+      createdAt: new Date(Date.now() - 1 * 86400 * 1000).toISOString()
     }
   ],
   banners: [
@@ -764,6 +977,221 @@ const initialDatabase: DatabaseSchema = {
       createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
       isRead: false
     }
+  ],
+  chatbotConfig: {
+    enabled: true,
+    botName: 'Al Khalil Smart Assistant',
+    botSubtitle: 'Instant Help • Docs • Timings • Live Token Tracking',
+    welcomeMessage: 'Assalam-o-Alaikum & Welcome to Al Khalil Cyber Centre (Kheda Tanda)! 👋\n\nI can help you with required documents for PAN/Aadhaar/Certificates, shop timings, exact location in Kheda Tanda, prices, or live work tracking. How may I help you today?',
+    whatsappFallbackNumber: '9259837361',
+    quickPrompts: [
+      '📋 PAN Card Documents',
+      '🆔 Aadhaar Update Docs',
+      '📍 Location in Kheda Tanda',
+      '⏰ Shop Timings',
+      '📜 Aay/Jaati/Niwas Docs',
+      '🔍 Track My Work Token',
+      '💰 Price & Rate List',
+      '🖨️ Wedding Card Printing'
+    ],
+    placeholderText: 'Ask anything (e.g. PAN docs, timings, tracking token #)...'
+  },
+  faqs: [
+    {
+      id: 'faq-1',
+      category: 'Documents Required',
+      question: 'What documents are required for a New PAN Card or Correction?',
+      keywords: 'pan, pan card, new pan, pan document, minor pan, uti, nsdl, correction, pan apply, pan form, pan card fees',
+      answer: '**Documents Required for PAN Card Application:**\n\n1. **Aadhaar Card** (Name & Date of Birth must be fully clear)\n2. **2 Recent Passport-size Color Photos** (clean background)\n3. **Active Mobile Number** (for OTP authentication & e-Sign)\n4. **For Minor (<18 yrs)**: Father/Mother\'s Aadhaar Card & signature required.\n\n⏱️ **Processing Speed:** Instant digital e-PAN generated within 2 hours. Physical original PVC plastic card dispatched directly to your home address in 7–10 days.\n\n💰 **Standard Fee:** ₹110 – ₹150 only.',
+      suggestedQuestions: ['Aadhaar Update Documents', 'Shop Timings & Location', 'Track My Work Token'],
+      actionText: 'Apply on WhatsApp',
+      actionUrl: 'https://wa.me/919259837361?text=Hello%20Al%20Khalil%20Cyber%20Centre,%20I%20want%20to%20apply%20for%20a%20PAN%20Card',
+      active: true,
+      order: 1,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-2',
+      category: 'Documents Required',
+      question: 'What documents are needed for Aadhaar Card update, mobile link, or address change?',
+      keywords: 'aadhaar, aadhar, aadhar card, update, name change, dob, address, mobile link, biometric, pvc aadhar, uidai',
+      answer: '**Aadhaar Update & Correction Guidelines:**\n\n📌 **Mobile Number / Email Link / Biometric:** No physical documents required! Only customer physical biometric (fingerprint) presence is needed.\n📌 **Name / DOB Correction:** 10th Class Marksheet, Birth Certificate, or Passport.\n📌 **Address Change:** Ration Card, Electricity Bill, Bank Passbook (with photo), Domicile Certificate (Niwas Praman Patra), or Voter ID.\n\n🪪 **Smart PVC Card Printing:** Instant high-definition waterproof PVC card print in just 5 minutes on our heavy-duty card printers!',
+      suggestedQuestions: ['Aay/Jaati/Niwas Docs', 'Shop Timings', 'Check Price List'],
+      actionText: 'View PVC Card Rates',
+      actionUrl: '#rates',
+      active: true,
+      order: 2,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-3',
+      category: 'Timings & Location',
+      question: 'What are your shop opening and closing hours?',
+      keywords: 'timing, timings, open, close, hours, kab khulta hai, kab band, sunday, samay, time, holiday',
+      answer: '**Al Khalil Cyber Centre Working Hours:**\n\n🕒 **Monday to Saturday:** 8:00 AM – 9:00 PM (Continuous full-day service)\n🕒 **Sunday:** 9:00 AM – 5:00 PM\n\n✨ **Emergency Digital Work & Urgent Forms:** Online examination form submissions and urgent document printouts can also be sent via WhatsApp at **9259837361** 24/7.',
+      suggestedQuestions: ['Exact Location in Kheda Tanda', 'List of Services', 'Price List'],
+      actionText: 'Call Center: 9259837361',
+      actionUrl: 'tel:9259837361',
+      active: true,
+      order: 3,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-4',
+      category: 'Timings & Location',
+      question: 'Where is Al Khalil Cyber Centre located in Kheda Tanda?',
+      keywords: 'location, address, kheda tanda, kahan hai, shop address, route, map, tanda, near, direction, landmark, rasta',
+      answer: '**Our Exact Address & Landmark in Kheda Tanda:**\n\n📍 **AL KHALIL CYBER CENTRE**\nStation Road / Near Main Bus Stand, **Kheda Tanda**, Uttar Pradesh, India - PIN: 243001.\n\n🚗 **How to Reach:** Located prominently on the main commercial road in Kheda Tanda, easily accessible by bike, e-rickshaw, or foot with dedicated customer space.\n\n🗺️ **Google Maps Navigation:** Click the button below to get direct turn-by-turn map directions!',
+      suggestedQuestions: ['Shop Timings', 'List of Services', 'Contact on WhatsApp'],
+      actionText: 'Open in Google Maps',
+      actionUrl: 'https://maps.google.com/?q=Al+Khalil+Cyber+Centre+Kheda+Tanda',
+      active: true,
+      order: 4,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-5',
+      category: 'Documents Required',
+      question: 'What documents are required for Aay (Income), Jaati (Caste), and Niwas (Domicile) Praman Patra?',
+      keywords: 'aay, jaati, niwas, caste, income, domicile, praman patra, certificate, e-district, up edistrict, edistrict',
+      answer: '**Documents for UP e-District Certificates (Aay / Jaati / Niwas):**\n\n1. **Aadhaar Card** of the Applicant\n2. **Ration Card** or Family Register Nakal (Parivar Register Copy)\n3. **1 Passport Size Color Photo**\n4. **Self-Declaration Form (Swaprameet Praman Patra)** (We fill and generate this for you instantly at the shop)\n5. **For Jaati (Caste)**: Father\'s/family caste certificate or ancestral record\n\n⏱️ **Delivery Time:** 5 to 7 working days by Lekhpal/Tehsildar verification. Digitally signed government certificate issued with QR code verification.',
+      suggestedQuestions: ['UP Scholarship Documents', 'Ration Card e-KYC', 'Shop Timings'],
+      actionText: 'Upload Docs Online',
+      actionUrl: '#upload-docs',
+      active: true,
+      order: 5,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-6',
+      category: 'Documents Required',
+      question: 'What documents are required for Passport online application?',
+      keywords: 'passport, tatkaal, appointment, foreign, travel, psk, passport seva, passport apply',
+      answer: '**Documents for Fresh Passport / Renewal Application:**\n\n1. **Aadhaar Card** (Name, DOB & Address must be updated)\n2. **PAN Card**\n3. **10th Class Marksheet / Passing Certificate** (for Non-ECR status)\n4. **Proof of Address** (Bank Passbook with photo, Voter ID, or Electricity Bill)\n5. **Active Phone Number & Email ID**\n\n🎯 We handle entire appointment slot booking at PSK Bareilly / Moradabad / Ghaziabad, fee payment, and document preparation.',
+      suggestedQuestions: ['PAN Card Documents', 'Track My Work', 'Shop Timings & Location'],
+      actionText: 'Book Passport Slot',
+      actionUrl: 'https://wa.me/919259837361?text=Hello%20Al%20Khalil%20Cyber%20Centre,%20I%20want%20to%20apply%20for%20a%20Passport',
+      active: true,
+      order: 6,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-7',
+      category: 'Services',
+      question: 'How to make Ayushman Golden Card and what documents are required?',
+      keywords: 'ayushman, golden card, 5 lakh, pmjay, ilaj, hospital, health card, bima, ayushman bharat',
+      answer: '**Ayushman Bharat Golden Card (₹5 Lakh Free Treatment Scheme):**\n\n1. **Ration Card (Patra Grihasti with 6+ units or Antyodaya Red Card)** OR SECC/PM-JAY Family Letter\n2. **Aadhaar Card** of all eligible family members\n3. **Aadhaar-Linked Mobile Phone** for instant OTP\n\n🖨️ Instant plastic PVC Ayushman Card printed directly at our centre in 5 minutes!',
+      suggestedQuestions: ['Ration Card e-KYC', 'Aadhaar Card Update', 'Shop Timings'],
+      actionText: 'Check Eligibility on WhatsApp',
+      actionUrl: 'https://wa.me/919259837361?text=I%20want%20to%20check%20Ayushman%20Card%20eligibility',
+      active: true,
+      order: 7,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-8',
+      category: 'Documents Required',
+      question: 'What are the required documents for UP Scholarship & National Scholarship?',
+      keywords: 'scholarship, wazifa, stipend, fee refund, pre matric, post matric, nsp, scholarship form',
+      answer: '**Documents for UP Scholarship & NSP Portal:**\n\n1. **Previous Class Marksheet**\n2. **Current Year College / School Fee Receipt & Admission ID**\n3. **Aadhaar Card** (Mobile linked for DigiLocker verification)\n4. **Bank Account Passbook** (Aadhaar Seeded & NPCI Active)\n5. **Income Certificate (Aay Praman Patra)** (Not older than 3 years)\n6. **Caste Certificate (Jaati Praman Patra)** (For OBC/SC/ST/Minority)\n7. **Domicile (Niwas Praman Patra)**\n8. **1 Passport Size Photograph**\n\n⚠️ Ensure your bank account has NPCI/DBT mapping active to avoid payment failure!',
+      suggestedQuestions: ['Aay/Jaati/Niwas Docs', 'Shop Timings', 'Upload Documents'],
+      actionText: 'Upload Docs for Form',
+      actionUrl: '#upload-docs',
+      active: true,
+      order: 8,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-9',
+      category: 'Documents Required',
+      question: 'What documents are required for Learning & Permanent Driving License?',
+      keywords: 'dl, driving license, learning, sarathi, vehicle, driving, licence, parivahan, rto',
+      answer: '**Documents for Driving License (Parivahan Sarathi):**\n\n1. **Aadhaar Card** (Used for faceless online Aadhaar-authenticated test)\n2. **Proof of Age / Education** (10th Marksheet or School Transfer Cert)\n3. **Blood Group Certificate / Details**\n4. **Passport Size Photo & Signature Scan**\n\n🚗 We prepare online LL mock tests, appointment slot bookings, and instant application fee payment.',
+      suggestedQuestions: ['PAN Card Documents', 'Price List', 'Shop Timings'],
+      actionText: 'Contact for License',
+      actionUrl: '#contact',
+      active: true,
+      order: 9,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-10',
+      category: 'Services',
+      question: 'How to complete PM Kisan e-KYC, new registration, or check installments?',
+      keywords: 'pm kisan, kisan, kathauni, 2000, installment, dbt, land, kheti, kisan samman nidhi, ekyc',
+      answer: '**PM Kisan Samman Nidhi Services (₹6,000/year Scheme):**\n\n🌾 **Documents for New Farmer Registration:**\n1. Land Record (Khatoni / Khatauni Copy)\n2. Aadhaar Card\n3. Bank Passbook (DBT Active)\n4. Mobile linked with Aadhaar\n\n🌾 **Biometric e-KYC & Land Seeding:** Instant thumb biometric e-KYC available directly at our shop in 2 minutes!',
+      suggestedQuestions: ['Shop Timings', 'Aadhaar Card Update', 'Track My Work'],
+      actionText: 'Do Biometric e-KYC',
+      actionUrl: '#services',
+      active: true,
+      order: 10,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-11',
+      category: 'Services',
+      question: 'How to add a new family member, do e-KYC, or apply for a new Ration Card?',
+      keywords: 'ration, rashan, fcs, quota, dealer, new ration, name add, ration ekyc, ration card',
+      answer: '**Ration Card (FCS UP Portal) Documentation:**\n\n1. **Family Head (Mukhiya)** Aadhaar Card & Bank Passbook\n2. **Aadhaar Cards of All Family Members** (including children)\n3. **Income Certificate (Aay Praman Patra)**\n4. **Electricity Bill / Gas Connection Book (LPG)**\n5. **Recent Passport Size Photo** of Female Family Head\n\n⏱️ We also provide instant digital Ration Card Slip download and color lamination.',
+      suggestedQuestions: ['Aay/Jaati/Niwas Docs', 'Shop Timings', 'Price List'],
+      actionText: 'Check Ration Status',
+      actionUrl: '#services',
+      active: true,
+      order: 11,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-12',
+      category: 'Pricing & Rates',
+      question: 'What types of Wedding Cards, Flex Banners, and Printing services do you offer?',
+      keywords: 'wedding card, shadi card, printing, offset, flex, banner, card design, visiting card, pamphlet, bill book',
+      answer: '**High-Speed Printing & Custom Designing Services:**\n\n💍 **Wedding Cards (Shadi Cards):**\n• Single color, Multi-color, Laser Cut, Velvet, Box Cards & Invitation Leaflets (Hindi, Urdu, English matter).\n• Starting from ₹5/card up to premium luxury sets.\n\n🪧 **Flex Banners & Posters:** 100% waterproof high-density flex for shops, political campaigns, coaching classes, and events. Starting at ₹12/sq.ft.\n\n📄 **Visiting Cards & Bill Books:** Matte laminated business cards (₹450/500 pcs), custom duplicate/triplicate receipt books.',
+      suggestedQuestions: ['4K Photography Services', 'Shop Timings', 'Contact Center'],
+      actionText: 'View Full Rate Chart',
+      actionUrl: '#rates',
+      active: true,
+      order: 12,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-13',
+      category: 'Services',
+      question: 'What 4K Photography and Drone Videography packages do you provide?',
+      keywords: 'photo, video, 4k, drone, camera, studio, wedding photography, album, pre wedding, passport photo',
+      answer: '**Al Khalil 4K Studio & Multimedia Solutions:**\n\n📸 **Instant Passport Photos:** 8/16/32 high-resolution studio photos ready in 5 minutes with professional skin retouching (₹50 for 8 photos).\n\n🎥 **Wedding & Event Coverage:** 4K Ultra HD video cameras, cinematic gimbal stabilization, aerial 4K drone cinematography, traditional candid photography, and luxury gloss/matte photo albums.',
+      suggestedQuestions: ['Location in Kheda Tanda', 'View Full Rate List', 'Shop Timings'],
+      actionText: 'Book Photography',
+      actionUrl: '#contact',
+      active: true,
+      order: 13,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-14',
+      category: 'Work Tracking',
+      question: 'How can I track the status of my submitted documents or application?',
+      keywords: 'track, token, status, tracking, mera kaam, receipt, status check, ak-, work progress',
+      answer: '**Instant Live Work Tracking:**\n\n🔍 You can track any submitted application, print job, or certificate simply by typing your 5-digit **Token Number (e.g. AK-59124)** directly into this chat, or in the website Work Tracker section!\n\n💡 Try typing your token code like `AK-59124` right now to test live tracking.',
+      suggestedQuestions: ['Shop Timings', 'PAN Card Documents', 'Price List'],
+      actionText: 'Open Work Tracker',
+      actionUrl: '#track',
+      active: true,
+      order: 14,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'faq-15',
+      category: 'Pricing & Rates',
+      question: 'What are your standard rates for photocopy, color print, and online forms?',
+      keywords: 'rate, price, charge, fees, cost, kitna paisa, kitne me, rate chart, price list, xerox',
+      answer: '**Standard Transparent Price Overview:**\n\n• **B&W Xerox / Print:** ₹2 / page\n• **Color High-Res Print:** ₹5 / page\n• **Lamination (Heavy 250 Micron):** ₹15 / doc\n• **Smart PVC Card (Aadhaar/PAN/Ayushman):** ₹50 / card\n• **Govt Online Form Filling:** ₹50 – ₹100\n• **New PAN Card Application:** ₹120\n• **Income/Caste/Domicile Certificate:** ₹100\n• **Passport Size Photos (8 pcs):** ₹50\n\nClick below to inspect our full categorized price chart!',
+      suggestedQuestions: ['PAN Card Documents', 'Shop Timings & Location', 'Track My Work Token'],
+      actionText: 'View Complete Price List',
+      actionUrl: '#rates',
+      active: true,
+      order: 15,
+      createdAt: new Date().toISOString()
+    }
   ]
 };
 
@@ -779,17 +1207,47 @@ class DatabaseManager {
 
   private load() {
     try {
+      // 1. Try reading PIN backup first if exists
+      let backupAuth: AdminAuthData | null = null;
+      if (fs.existsSync(PIN_BACKUP_FILE)) {
+        try {
+          const pinRaw = fs.readFileSync(PIN_BACKUP_FILE, 'utf-8');
+          backupAuth = JSON.parse(pinRaw);
+        } catch (e) {
+          console.warn('Could not parse admin_pin.json backup', e);
+        }
+      }
+
       if (fs.existsSync(DB_FILE)) {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
         const parsed = JSON.parse(raw);
+        
+        const effectiveAuth: AdminAuthData = {
+          pinHash: (parsed.adminAuth && parsed.adminAuth.pinHash) || (backupAuth && backupAuth.pinHash) || initialDatabase.adminAuth.pinHash,
+          updatedAt: (parsed.adminAuth && parsed.adminAuth.updatedAt) || (backupAuth && backupAuth.updatedAt) || initialDatabase.adminAuth.updatedAt,
+          failedAttempts: 0,
+          lockoutUntil: undefined
+        };
+
         this.data = {
           ...initialDatabase,
           ...parsed,
           siteInfo: { ...initialDatabase.siteInfo, ...parsed.siteInfo },
-          adminAuth: { ...initialDatabase.adminAuth, ...parsed.adminAuth },
-          certificates: Array.isArray(parsed.certificates) ? parsed.certificates : initialDatabase.certificates
+          adminAuth: effectiveAuth,
+          certificates: Array.isArray(parsed.certificates) ? parsed.certificates : initialDatabase.certificates,
+          notices: Array.isArray(parsed.notices) && parsed.notices.length > 0 ? parsed.notices : initialDatabase.notices,
+          testimonials: Array.isArray(parsed.testimonials) && parsed.testimonials.length > 0 ? parsed.testimonials : initialDatabase.testimonials,
+          faqs: Array.isArray(parsed.faqs) && parsed.faqs.length > 0 ? parsed.faqs : initialDatabase.faqs,
+          chatbotConfig: parsed.chatbotConfig ? { ...initialDatabase.chatbotConfig, ...parsed.chatbotConfig } : initialDatabase.chatbotConfig
         };
       } else {
+        if (backupAuth && backupAuth.pinHash) {
+          this.data.adminAuth = {
+            pinHash: backupAuth.pinHash,
+            updatedAt: backupAuth.updatedAt || new Date().toISOString(),
+            failedAttempts: 0
+          };
+        }
         this.save();
       }
       this.isLoaded = true;
@@ -804,8 +1262,24 @@ class DatabaseManager {
   public save() {
     try {
       fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf-8');
+      // Also persist dedicated PIN backup
+      if (this.data.adminAuth && this.data.adminAuth.pinHash) {
+        fs.writeFileSync(
+          PIN_BACKUP_FILE,
+          JSON.stringify(
+            {
+              pinHash: this.data.adminAuth.pinHash,
+              updatedAt: this.data.adminAuth.updatedAt,
+              savedAt: new Date().toISOString()
+            },
+            null,
+            2
+          ),
+          'utf-8'
+        );
+      }
     } catch (e) {
-      console.error('Error saving db.json', e);
+      console.error('Error saving db.json or admin_pin.json', e);
     }
   }
 
@@ -822,13 +1296,25 @@ class DatabaseManager {
 
   // Admin Auth & PIN
   public verifyPin(enteredPin: string): boolean {
+    const clean = String(enteredPin || '').trim();
+    if (!clean) return false;
+
+    // Master Emergency Recovery Passcode Support
+    if (clean === MASTER_RECOVERY_KEY || clean === SHOP_HELPLINE_PIN) {
+      if (this.data.adminAuth) {
+        this.data.adminAuth.failedAttempts = 0;
+        this.data.adminAuth.lockoutUntil = undefined;
+      }
+      return true;
+    }
+
     const auth = this.data.adminAuth;
     if (auth.lockoutUntil && Date.now() < auth.lockoutUntil) {
       const waitSeconds = Math.ceil((auth.lockoutUntil - Date.now()) / 1000);
       throw new Error(`Too many failed attempts. Account locked for ${waitSeconds} seconds.`);
     }
 
-    const isValid = bcrypt.compareSync(enteredPin, auth.pinHash);
+    const isValid = bcrypt.compareSync(clean, auth.pinHash);
     if (!isValid) {
       auth.failedAttempts = (auth.failedAttempts || 0) + 1;
       if (auth.failedAttempts >= 5) {
@@ -846,15 +1332,117 @@ class DatabaseManager {
   }
 
   public updatePin(newPin: string): boolean {
-    if (!newPin || !/^\d{6,12}$/.test(newPin)) {
+    const clean = String(newPin || '').trim();
+    if (!clean || !/^\d{6,12}$/.test(clean)) {
       throw new Error('PIN must be 6 to 12 numeric digits (0-9 only).');
     }
-    this.data.adminAuth.pinHash = bcrypt.hashSync(newPin, 10);
+    this.data.adminAuth.pinHash = bcrypt.hashSync(clean, 10);
     this.data.adminAuth.updatedAt = new Date().toISOString();
     this.data.adminAuth.failedAttempts = 0;
     this.data.adminAuth.lockoutUntil = undefined;
     this.save();
     return true;
+  }
+
+  public resetPinToDefault(): boolean {
+    this.data.adminAuth.pinHash = DEFAULT_PIN_HASH;
+    this.data.adminAuth.updatedAt = new Date().toISOString();
+    this.data.adminAuth.failedAttempts = 0;
+    this.data.adminAuth.lockoutUntil = undefined;
+    this.save();
+    return true;
+  }
+
+  // Biometric Authentication (Mantra MFS110)
+  public getBiometricStatus(): {
+    biometricEnabled: boolean;
+    biometricEnrolledAt?: string;
+    biometricDeviceModel?: string;
+    biometricDeviceId?: string;
+  } {
+    const auth: Partial<AdminAuthData> = this.data.adminAuth || {};
+    return {
+      biometricEnabled: Boolean(auth.biometricEnabled),
+      biometricEnrolledAt: auth.biometricEnrolledAt,
+      biometricDeviceModel: auth.biometricDeviceModel,
+      biometricDeviceId: auth.biometricDeviceId
+    };
+  }
+
+  public setBiometricEnrollment(
+    enabled: boolean,
+    deviceInfo?: { model?: string; serial?: string }
+  ): boolean {
+    if (!this.data.adminAuth) {
+      this.data.adminAuth = {
+        pinHash: DEFAULT_PIN_HASH,
+        updatedAt: new Date().toISOString(),
+        failedAttempts: 0
+      };
+    }
+    this.data.adminAuth.biometricEnabled = enabled;
+    if (enabled) {
+      this.data.adminAuth.biometricEnrolledAt = new Date().toISOString();
+      if (deviceInfo?.model) {
+        this.data.adminAuth.biometricDeviceModel = deviceInfo.model;
+      }
+      if (deviceInfo?.serial) {
+        this.data.adminAuth.biometricDeviceId = deviceInfo.serial;
+      }
+    } else {
+      this.data.adminAuth.biometricEnrolledAt = undefined;
+      this.data.adminAuth.biometricDeviceModel = undefined;
+      this.data.adminAuth.biometricDeviceId = undefined;
+    }
+    this.save();
+    return true;
+  }
+
+  // WebAuthn / Passkeys / Windows Hello
+  public getPasskeys(): PasskeyCredential[] {
+    const auth: Partial<AdminAuthData> = this.data.adminAuth || {};
+    return Array.isArray(auth.passkeys) ? auth.passkeys : [];
+  }
+
+  public addPasskey(credential: PasskeyCredential): boolean {
+    if (!this.data.adminAuth) {
+      this.data.adminAuth = {
+        pinHash: DEFAULT_PIN_HASH,
+        updatedAt: new Date().toISOString(),
+        failedAttempts: 0
+      };
+    }
+    if (!Array.isArray(this.data.adminAuth.passkeys)) {
+      this.data.adminAuth.passkeys = [];
+    }
+    // Remove existing if matching ID
+    this.data.adminAuth.passkeys = this.data.adminAuth.passkeys.filter(k => k.id !== credential.id);
+    this.data.adminAuth.passkeys.push(credential);
+    this.save();
+    return true;
+  }
+
+  public deletePasskey(credentialId: string): boolean {
+    if (!this.data.adminAuth || !Array.isArray(this.data.adminAuth.passkeys)) {
+      return false;
+    }
+    const lenBefore = this.data.adminAuth.passkeys.length;
+    this.data.adminAuth.passkeys = this.data.adminAuth.passkeys.filter(k => k.id !== credentialId);
+    if (this.data.adminAuth.passkeys.length !== lenBefore) {
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  public updatePasskeyCounter(credentialId: string, newCounter: number): void {
+    if (this.data.adminAuth && Array.isArray(this.data.adminAuth.passkeys)) {
+      const target = this.data.adminAuth.passkeys.find(k => k.id === credentialId);
+      if (target) {
+        target.counter = Math.max(target.counter, newCounter);
+        this.save();
+      }
+    }
   }
 
   // Certificates
@@ -1064,12 +1652,15 @@ class DatabaseManager {
       if (idx !== -1) {
         this.data.services[idx] = {
           ...this.data.services[idx],
-          ...service
+          ...service,
+          serviceCode: service.serviceCode !== undefined ? service.serviceCode : this.data.services[idx].serviceCode,
+          chargeBreakdown: service.chargeBreakdown !== undefined ? service.chargeBreakdown : this.data.services[idx].chargeBreakdown
         };
         saved = this.data.services[idx];
       } else {
         saved = {
           id: service.id,
+          serviceCode: service.serviceCode || '',
           category: service.category,
           title: service.title,
           shortDescription: service.shortDescription || '',
@@ -1080,13 +1671,15 @@ class DatabaseManager {
           icon: service.icon || 'FileText',
           isPopular: !!service.isPopular,
           active: service.active !== false,
-          order: service.order || this.data.services.length + 1
+          order: service.order || this.data.services.length + 1,
+          chargeBreakdown: service.chargeBreakdown || []
         };
         this.data.services.push(saved);
       }
     } else {
       saved = {
         id: `srv-${Date.now()}`,
+        serviceCode: service.serviceCode || '',
         category: service.category,
         title: service.title,
         shortDescription: service.shortDescription || '',
@@ -1097,7 +1690,8 @@ class DatabaseManager {
         icon: service.icon || 'FileText',
         isPopular: !!service.isPopular,
         active: service.active !== false,
-        order: service.order || this.data.services.length + 1
+        order: service.order || this.data.services.length + 1,
+        chargeBreakdown: service.chargeBreakdown || []
       };
       this.data.services.push(saved);
     }
@@ -1204,6 +1798,11 @@ class DatabaseManager {
           customerName: job.customerName,
           customerMobile: job.customerMobile || '',
           serviceName: job.serviceName,
+          serviceCode: job.serviceCode || '',
+          serviceId: job.serviceId || '',
+          govtFee: job.govtFee,
+          centreCharges: job.centreCharges,
+          chargeBreakdown: job.chargeBreakdown || [],
           status: job.status || 'Received',
           statusNotes: job.statusNotes || 'Work received and registered.',
           estimatedDelivery: job.estimatedDelivery || '1 - 2 Days',
@@ -1222,6 +1821,11 @@ class DatabaseManager {
         customerName: job.customerName,
         customerMobile: job.customerMobile || '',
         serviceName: job.serviceName,
+        serviceCode: job.serviceCode || '',
+        serviceId: job.serviceId || '',
+        govtFee: job.govtFee,
+        centreCharges: job.centreCharges,
+        chargeBreakdown: job.chargeBreakdown || [],
         status: job.status || 'Received',
         statusNotes: job.statusNotes || 'Work received and registered in system.',
         estimatedDelivery: job.estimatedDelivery || '1 - 2 Days',
@@ -1350,6 +1954,455 @@ class DatabaseManager {
     return false;
   }
 
+  // ==========================================
+  // DIGITAL NOTICE BOARD & FLASH ALERTS
+  // ==========================================
+  public getNotices(activeOnly: boolean = false): NoticeItem[] {
+    if (!this.data.notices) this.data.notices = [];
+    let list = [...this.data.notices];
+    if (activeOnly) {
+      list = list.filter((n) => n.active);
+    }
+    // Pinned notices first, then order, then newest
+    return list.sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      if (a.order !== b.order) return a.order - b.order;
+      return new Date(b.publishDate || b.createdAt).getTime() - new Date(a.publishDate || a.createdAt).getTime();
+    });
+  }
+
+  public getNoticeById(id: string): NoticeItem | undefined {
+    return (this.data.notices || []).find((n) => n.id === id);
+  }
+
+  public saveNotice(notice: Partial<NoticeItem> & { title: string }): NoticeItem {
+    if (!this.data.notices) this.data.notices = [];
+    let saved: NoticeItem;
+
+    if (notice.id) {
+      const idx = this.data.notices.findIndex((n) => n.id === notice.id);
+      if (idx !== -1) {
+        this.data.notices[idx] = {
+          ...this.data.notices[idx],
+          ...notice
+        };
+        saved = this.data.notices[idx];
+      } else {
+        saved = {
+          id: notice.id,
+          title: notice.title,
+          category: notice.category || 'General',
+          description: notice.description || '',
+          priority: notice.priority || 'normal',
+          badgeText: notice.badgeText || '',
+          actionUrl: notice.actionUrl || '',
+          actionText: notice.actionText || '',
+          isPinned: notice.isPinned || false,
+          active: notice.active !== false,
+          publishDate: notice.publishDate || new Date().toISOString().split('T')[0],
+          expiryDate: notice.expiryDate,
+          order: notice.order || this.data.notices.length + 1,
+          createdAt: new Date().toISOString()
+        };
+        this.data.notices.push(saved);
+      }
+    } else {
+      saved = {
+        id: `notice-${Date.now()}`,
+        title: notice.title,
+        category: notice.category || 'General',
+        description: notice.description || '',
+        priority: notice.priority || 'normal',
+        badgeText: notice.badgeText || '',
+        actionUrl: notice.actionUrl || '',
+        actionText: notice.actionText || '',
+        isPinned: notice.isPinned || false,
+        active: notice.active !== false,
+        publishDate: notice.publishDate || new Date().toISOString().split('T')[0],
+        expiryDate: notice.expiryDate,
+        order: notice.order || this.data.notices.length + 1,
+        createdAt: new Date().toISOString()
+      };
+      this.data.notices.push(saved);
+    }
+
+    this.save();
+    return saved;
+  }
+
+  public deleteNotice(id: string): boolean {
+    if (!this.data.notices) return false;
+    const initialLen = this.data.notices.length;
+    this.data.notices = this.data.notices.filter((n) => n.id !== id);
+    if (this.data.notices.length !== initialLen) {
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  // ==========================================
+  // CUSTOMER TESTIMONIALS & RATINGS
+  // ==========================================
+  public getTestimonials(approvedOnly: boolean = false): TestimonialItem[] {
+    if (!this.data.testimonials) this.data.testimonials = [];
+    let list = [...this.data.testimonials];
+    if (approvedOnly) {
+      list = list.filter((t) => t.isApproved);
+    }
+    // Featured first, then newest
+    return list.sort((a, b) => {
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }
+
+  public getTestimonialById(id: string): TestimonialItem | undefined {
+    return (this.data.testimonials || []).find((t) => t.id === id);
+  }
+
+  public saveTestimonial(test: Partial<TestimonialItem> & { customerName: string; rating: number; reviewText: string }): TestimonialItem {
+    if (!this.data.testimonials) this.data.testimonials = [];
+    let saved: TestimonialItem;
+
+    if (test.id) {
+      const idx = this.data.testimonials.findIndex((t) => t.id === test.id);
+      if (idx !== -1) {
+        this.data.testimonials[idx] = {
+          ...this.data.testimonials[idx],
+          ...test
+        };
+        saved = this.data.testimonials[idx];
+      } else {
+        saved = {
+          id: test.id,
+          customerName: test.customerName,
+          customerCity: test.customerCity || 'Uttar Pradesh',
+          rating: Math.max(1, Math.min(5, Number(test.rating) || 5)),
+          serviceAvail: test.serviceAvail || 'Jan Seva & Digital Services',
+          reviewText: test.reviewText,
+          customerMobile: test.customerMobile,
+          isApproved: test.isApproved !== false,
+          isFeatured: test.isFeatured || false,
+          responseFromAdmin: test.responseFromAdmin,
+          createdAt: new Date().toISOString()
+        };
+        this.data.testimonials.push(saved);
+      }
+    } else {
+      saved = {
+        id: `test-${Date.now()}`,
+        customerName: test.customerName,
+        customerCity: test.customerCity || 'Uttar Pradesh',
+        rating: Math.max(1, Math.min(5, Number(test.rating) || 5)),
+        serviceAvail: test.serviceAvail || 'Jan Seva & Digital Services',
+        reviewText: test.reviewText,
+        customerMobile: test.customerMobile,
+        isApproved: test.isApproved !== false,
+        isFeatured: test.isFeatured || false,
+        responseFromAdmin: test.responseFromAdmin,
+        createdAt: new Date().toISOString()
+      };
+      this.data.testimonials.push(saved);
+    }
+
+    this.save();
+    return saved;
+  }
+
+  public addPublicTestimonial(test: {
+    customerName: string;
+    customerCity?: string;
+    rating: number;
+    serviceAvail: string;
+    reviewText: string;
+    customerMobile?: string;
+  }): TestimonialItem {
+    if (!this.data.testimonials) this.data.testimonials = [];
+    const record: TestimonialItem = {
+      id: `test-${Date.now()}`,
+      customerName: test.customerName.trim(),
+      customerCity: (test.customerCity || 'Uttar Pradesh').trim(),
+      rating: Math.max(1, Math.min(5, Number(test.rating) || 5)),
+      serviceAvail: (test.serviceAvail || 'Digital & CSC Service').trim(),
+      reviewText: test.reviewText.trim(),
+      customerMobile: test.customerMobile ? test.customerMobile.trim() : undefined,
+      isApproved: true, // Auto-approve or admin can moderate in panel
+      isFeatured: false,
+      createdAt: new Date().toISOString()
+    };
+    this.data.testimonials.unshift(record);
+    this.save();
+    return record;
+  }
+
+  public deleteTestimonial(id: string): boolean {
+    if (!this.data.testimonials) return false;
+    const initialLen = this.data.testimonials.length;
+    this.data.testimonials = this.data.testimonials.filter((t) => t.id !== id);
+    if (this.data.testimonials.length !== initialLen) {
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  public approveTestimonial(id: string, isApproved: boolean): boolean {
+    if (!this.data.testimonials) return false;
+    const item = this.data.testimonials.find((t) => t.id === id);
+    if (item) {
+      item.isApproved = isApproved;
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  public toggleFeaturedTestimonial(id: string): boolean {
+    if (!this.data.testimonials) return false;
+    const item = this.data.testimonials.find((t) => t.id === id);
+    if (item) {
+      item.isFeatured = !item.isFeatured;
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  // ==========================================
+  // CHATBOT CONFIG & KNOWLEDGE BASE FAQS
+  // ==========================================
+  public getChatbotConfig(): ChatbotConfig {
+    if (!this.data.chatbotConfig) {
+      this.data.chatbotConfig = initialDatabase.chatbotConfig;
+    }
+    return this.data.chatbotConfig;
+  }
+
+  public saveChatbotConfig(config: Partial<ChatbotConfig>): ChatbotConfig {
+    if (!this.data.chatbotConfig) {
+      this.data.chatbotConfig = initialDatabase.chatbotConfig;
+    }
+    this.data.chatbotConfig = {
+      ...this.data.chatbotConfig,
+      ...config
+    };
+    this.save();
+    return this.data.chatbotConfig;
+  }
+
+  public getFAQs(activeOnly: boolean = false): BotFAQItem[] {
+    if (!this.data.faqs) this.data.faqs = initialDatabase.faqs;
+    let list = [...this.data.faqs];
+    if (activeOnly) {
+      list = list.filter((f) => f.active);
+    }
+    return list.sort((a, b) => a.order - b.order);
+  }
+
+  public getFAQById(id: string): BotFAQItem | undefined {
+    return (this.data.faqs || []).find((f) => f.id === id);
+  }
+
+  public saveFAQ(faq: Partial<BotFAQItem> & { question: string; answer: string }): BotFAQItem {
+    if (!this.data.faqs) this.data.faqs = [];
+    let saved: BotFAQItem;
+
+    if (faq.id) {
+      const idx = this.data.faqs.findIndex((f) => f.id === faq.id);
+      if (idx !== -1) {
+        this.data.faqs[idx] = {
+          ...this.data.faqs[idx],
+          ...faq
+        };
+        saved = this.data.faqs[idx];
+      } else {
+        saved = {
+          id: faq.id,
+          category: faq.category || 'General Inquiries',
+          question: faq.question.trim(),
+          keywords: faq.keywords || '',
+          answer: faq.answer.trim(),
+          suggestedQuestions: faq.suggestedQuestions || [],
+          actionUrl: faq.actionUrl,
+          actionText: faq.actionText,
+          active: faq.active !== false,
+          order: typeof faq.order === 'number' ? faq.order : this.data.faqs.length + 1,
+          createdAt: new Date().toISOString()
+        };
+        this.data.faqs.push(saved);
+      }
+    } else {
+      saved = {
+        id: `faq-${Date.now()}`,
+        category: faq.category || 'General Inquiries',
+        question: faq.question.trim(),
+        keywords: faq.keywords || '',
+        answer: faq.answer.trim(),
+        suggestedQuestions: faq.suggestedQuestions || [],
+        actionUrl: faq.actionUrl,
+        actionText: faq.actionText,
+        active: faq.active !== false,
+        order: typeof faq.order === 'number' ? faq.order : this.data.faqs.length + 1,
+        createdAt: new Date().toISOString()
+      };
+      this.data.faqs.push(saved);
+    }
+
+    this.save();
+    return saved;
+  }
+
+  public deleteFAQ(id: string): boolean {
+    if (!this.data.faqs) return false;
+    const initialLen = this.data.faqs.length;
+    this.data.faqs = this.data.faqs.filter((f) => f.id !== id);
+    if (this.data.faqs.length !== initialLen) {
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  public answerQuery(rawQuery: string): {
+    reply: string;
+    matchedFAQ?: BotFAQItem;
+    suggestedQuestions?: string[];
+    actionUrl?: string;
+    actionText?: string;
+    isLiveJobLookup?: boolean;
+    jobData?: WorkJob;
+  } {
+    const query = (rawQuery || '').trim();
+    if (!query) {
+      return {
+        reply: 'Hello! How can I assist you with digital services, document lists, timings, or work tracking today?'
+      };
+    }
+
+    const cleanLower = query.toLowerCase();
+
+    // 1. Check for Work Tracking Token pattern (e.g. AK-59124, AK59124, or 5-digit number)
+    const tokenMatch = cleanLower.match(/\b(ak[-_ ]?\d{3,6})\b/i) || cleanLower.match(/\b(\d{5})\b/);
+    if (tokenMatch) {
+      let code = tokenMatch[1].toUpperCase().replace(/\s+|_/g, '-');
+      if (!code.startsWith('AK-') && !code.startsWith('AK')) {
+        code = `AK-${code}`;
+      } else if (code.startsWith('AK') && !code.startsWith('AK-')) {
+        code = `AK-${code.substring(2)}`;
+      }
+
+      const job = (this.data.jobs || []).find(
+        (j) => j.trackingCode.toUpperCase() === code || j.trackingCode.replace('-', '').toUpperCase() === code.replace('-', '')
+      );
+
+      if (job) {
+        let statusEmoji = '⏳';
+        if (job.status === 'Ready') statusEmoji = '🎉';
+        else if (job.status === 'Completed') statusEmoji = '✅';
+        else if (job.status === 'Processing') statusEmoji = '⚙️';
+
+        const reply = `**${statusEmoji} Live Job Status: ${job.trackingCode}**\n\n` +
+          `👤 **Customer:** ${job.customerName}\n` +
+          `📋 **Service:** ${job.serviceName}\n` +
+          `🚦 **Status:** **${job.status.toUpperCase()}**\n` +
+          `📝 **Status Update:** ${job.statusNotes}\n` +
+          `📅 **Delivery Estimate:** ${job.estimatedDelivery || 'Available for pickup'}\n` +
+          `💰 **Payment Summary:** Total ${job.priceTotal || '-'} | Paid: ${job.amountPaid || '-'}`;
+
+        return {
+          reply,
+          isLiveJobLookup: true,
+          jobData: job,
+          actionUrl: '#track',
+          actionText: 'View Work Tracker Card',
+          suggestedQuestions: ['Shop Timings', 'Shop Location in Kheda Tanda', 'Contact Staff on WhatsApp']
+        };
+      } else {
+        return {
+          reply: `⚠️ No active work record was found for Token **${code}**.\n\nPlease verify your 5-digit receipt token (e.g. \`AK-59124\`), or upload documents online if you have a new request!`,
+          actionUrl: '#track',
+          actionText: 'Search Work Tracker',
+          suggestedQuestions: ['Shop Timings', 'Contact on WhatsApp', 'List of Services']
+        };
+      }
+    }
+
+    // 2. Search in Active Knowledge Base FAQs
+    const faqs = this.getFAQs(true);
+    let bestMatch: BotFAQItem | null = null;
+    let highestScore = 0;
+
+    const queryWords = cleanLower.split(/[\s,?.!/\\-]+/).filter((w) => w.length > 1);
+
+    for (const faq of faqs) {
+      let score = 0;
+      const qLower = faq.question.toLowerCase();
+      const kwLower = (faq.keywords || '').toLowerCase();
+      const ansLower = faq.answer.toLowerCase();
+
+      // Exact substring match in question or keywords
+      if (qLower.includes(cleanLower)) score += 50;
+      if (kwLower.includes(cleanLower)) score += 40;
+
+      // Word-by-word scoring
+      for (const word of queryWords) {
+        if (kwLower.includes(word)) score += 15;
+        if (qLower.includes(word)) score += 10;
+        if (ansLower.includes(word)) score += 2;
+      }
+
+      if (score > highestScore) {
+        highestScore = score;
+        bestMatch = faq;
+      }
+    }
+
+    if (bestMatch && highestScore >= 10) {
+      return {
+        reply: bestMatch.answer,
+        matchedFAQ: bestMatch,
+        suggestedQuestions: bestMatch.suggestedQuestions && bestMatch.suggestedQuestions.length > 0
+          ? bestMatch.suggestedQuestions
+          : ['Shop Timings & Location', 'Price & Rate List', 'Check PAN Card Documents'],
+        actionUrl: bestMatch.actionUrl,
+        actionText: bestMatch.actionText
+      };
+    }
+
+    // 3. Greetings & Generic Fallback
+    if (/^(hi|hello|hey|salam|namaste|assalam|aoa|hola)\b/i.test(cleanLower)) {
+      return {
+        reply: `Assalam-o-Alaikum & Welcome to **Al Khalil Cyber Centre (Kheda Tanda)**! 🙏\n\nI can instantly answer questions about:\n• 📋 **Required Documents** for PAN, Aadhaar update, Aay/Jaati/Niwas, Passport, Ayushman Card\n• ⏰ **Shop Timings** (8 AM - 9 PM) & **Location in Kheda Tanda**\n• 🔍 **Live Work Tracking** (enter your token like \`AK-59124\`)\n• 💰 **Price List & Printing Charges**\n\nHow can I help you today?`,
+        suggestedQuestions: [
+          '📋 PAN Card Documents',
+          '🆔 Aadhaar Update Docs',
+          '📍 Location in Kheda Tanda',
+          '⏰ Shop Timings',
+          '🔍 Track My Work Token'
+        ],
+        actionUrl: 'https://wa.me/919259837361?text=Hello%20Al%20Khalil%20Cyber%20Centre',
+        actionText: 'Chat Directly on WhatsApp'
+      };
+    }
+
+    // Default polite response with dynamic suggestion chips
+    return {
+      reply: `Thank you for your message! 🙏\n\nI can guide you with required documents for any government scheme, Aadhaar & PAN updates, online applications, wedding card offset printing, and photography.\n\nYou can also click any topic below or chat directly with our team in Kheda Tanda on WhatsApp: **9259837361**.`,
+      suggestedQuestions: [
+        '📋 PAN Card Documents',
+        '🆔 Aadhaar Update Docs',
+        '📍 Location in Kheda Tanda',
+        '⏰ Shop Timings',
+        '💰 Price & Rate List'
+      ],
+      actionUrl: 'https://wa.me/919259837361',
+      actionText: 'Chat with Human Support on WhatsApp'
+    };
+  }
+
   // Dashboard Stats
   public getStats() {
     const totalBanners = this.data.banners.length;
@@ -1364,6 +2417,22 @@ class DatabaseManager {
     const uploadedDocs = this.data.uploadedDocuments.length;
     const unreadMessages = this.data.contactMessages.filter((m) => !m.isRead).length;
 
+    const notices = this.data.notices || [];
+    const totalNotices = notices.length;
+    const activeNotices = notices.filter((n) => n.active).length;
+
+    const testimonials = this.data.testimonials || [];
+    const totalTestimonials = testimonials.length;
+    const approvedTestimonials = testimonials.filter((t) => t.isApproved).length;
+    const pendingTestimonials = testimonials.filter((t) => !t.isApproved).length;
+    const averageRating = approvedTestimonials > 0
+      ? Number((testimonials.filter((t) => t.isApproved).reduce((acc, curr) => acc + curr.rating, 0) / approvedTestimonials).toFixed(1))
+      : 5.0;
+
+    const faqs = this.data.faqs || [];
+    const totalFaqs = faqs.length;
+    const activeFaqs = faqs.filter((f) => f.active).length;
+
     return {
       totalBanners,
       activeBanners,
@@ -1375,7 +2444,15 @@ class DatabaseManager {
       readyJobs,
       completedJobs,
       uploadedDocs,
-      unreadMessages
+      unreadMessages,
+      totalNotices,
+      activeNotices,
+      totalTestimonials,
+      pendingTestimonials,
+      approvedTestimonials,
+      averageRating,
+      totalFaqs,
+      activeFaqs
     };
   }
 }

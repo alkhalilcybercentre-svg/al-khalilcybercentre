@@ -39,6 +39,8 @@ export interface SiteInfo {
   showPhoneButton?: boolean;
   showWhatsAppButton?: boolean;
   showFlashNews?: boolean;
+  showNotices?: boolean;
+  showTestimonials?: boolean;
   showCertificates?: boolean;
   showServices?: boolean;
   showImportantServices?: boolean;
@@ -47,6 +49,46 @@ export interface SiteInfo {
   showDocUpload?: boolean;
   showAbout?: boolean;
   showContact?: boolean;
+}
+
+export interface NoticeItem {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  priority: 'urgent' | 'high' | 'normal';
+  badgeText?: string;
+  actionUrl?: string;
+  actionText?: string;
+  isPinned?: boolean;
+  pinned?: boolean;
+  active: boolean;
+  publishDate?: string;
+  date?: string;
+  expiryDate?: string;
+  order: number;
+  createdAt?: string;
+}
+
+export interface TestimonialItem {
+  id: string;
+  customerName: string;
+  customerCity?: string;
+  city?: string;
+  rating: number; // 1 to 5
+  serviceAvail?: string;
+  serviceAvailed?: string;
+  reviewText: string;
+  customerMobile?: string;
+  mobile?: string;
+  isApproved: boolean;
+  isFeatured?: boolean;
+  responseFromAdmin?: string;
+  adminReply?: string;
+  adminReplyDate?: string;
+  date?: string;
+  order?: number;
+  createdAt?: string;
 }
 
 export interface CertificateItem {
@@ -90,8 +132,16 @@ export interface BannerItem {
   createdAt?: string;
 }
 
+export interface ServiceChargeItem {
+  id: string;
+  name: string;
+  govtFee: number;
+  centreCharge: number;
+}
+
 export interface ServiceItem {
   id: string;
+  serviceCode?: string;
   category: string;
   title: string;
   shortDescription: string;
@@ -103,6 +153,7 @@ export interface ServiceItem {
   isPopular: boolean;
   active: boolean;
   order: number;
+  chargeBreakdown?: ServiceChargeItem[];
 }
 
 export interface RateItem {
@@ -124,6 +175,11 @@ export interface WorkJob {
   customerName: string;
   customerMobile: string;
   serviceName: string;
+  serviceCode?: string;
+  serviceId?: string;
+  govtFee?: number;
+  centreCharges?: number;
+  chargeBreakdown?: ServiceChargeItem[];
   status: JobStatus;
   statusNotes: string;
   estimatedDelivery?: string;
@@ -159,6 +215,30 @@ export interface ContactMessage {
   isRead: boolean;
 }
 
+export interface BotFAQItem {
+  id: string;
+  category: string;
+  question: string;
+  keywords: string;
+  answer: string;
+  suggestedQuestions?: string[];
+  actionUrl?: string;
+  actionText?: string;
+  active: boolean;
+  order: number;
+  createdAt?: string;
+}
+
+export interface ChatbotConfig {
+  enabled: boolean;
+  botName: string;
+  botSubtitle: string;
+  welcomeMessage: string;
+  whatsappFallbackNumber: string;
+  quickPrompts: string[];
+  placeholderText: string;
+}
+
 export interface DashboardStats {
   totalBanners: number;
   activeBanners: number;
@@ -171,4 +251,63 @@ export interface DashboardStats {
   completedJobs: number;
   uploadedDocs: number;
   unreadMessages: number;
+  totalNotices?: number;
+  activeNotices?: number;
+  totalTestimonials?: number;
+  pendingTestimonials?: number;
+  approvedTestimonials?: number;
+  averageRating?: number;
 }
+
+// ==========================================
+// GOOGLE AI SUITE TYPES
+// ==========================================
+
+export interface AiVoiceOption {
+  id: string;
+  name: string;
+  gender: string;
+  description: string;
+}
+
+export interface VoiceConversionResponse {
+  audioBase64: string;
+  mimeType: string;
+  transcribedText: string;
+  targetVoice: string;
+  modelUsed: string;
+  notes: string;
+}
+
+export interface SearchAssistantSource {
+  title: string;
+  url: string;
+}
+
+export interface SearchAssistantResponse {
+  answer: string;
+  sources: SearchAssistantSource[];
+  searchQueries?: string[];
+  grounded: boolean;
+  modelUsed: string;
+}
+
+export interface TranscriptionResponse {
+  text: string;
+  detectedLanguage?: string;
+  durationSeconds?: number;
+  wordCount: number;
+  modelUsed: string;
+}
+
+export interface ImageToVideoStartResponse {
+  operationName: string;
+  model: string;
+}
+
+export interface ImageToVideoStatusResponse {
+  done: boolean;
+  videoUri?: string;
+  error?: string;
+}
+

@@ -61,6 +61,7 @@ export const Footer: React.FC<FooterProps> = ({ siteInfo, onNavigate, onOpenAdmi
             <ul className="space-y-2 text-xs font-bold uppercase tracking-wide">
               {[
                 { label: 'Home Page', id: 'home' },
+                { label: 'AI Tools Suite', id: 'ai-tools' },
                 { label: 'Services Catalog', id: 'services' },
                 { label: 'Rate List & Prices', id: 'rates' },
                 { label: 'Certificates & License', id: 'certificates' },

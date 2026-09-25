@@ -32,8 +32,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { label: 'Home', id: 'home' },
+    { label: 'Notices', id: 'notices' },
+    { label: 'AI Tools', id: 'ai-tools' },
     { label: 'Services', id: 'services' },
     { label: 'Rate List', id: 'rates' },
+    { label: 'Reviews', id: 'testimonials' },
     { label: 'Certificates', id: 'certificates' },
     { label: 'Track Work', id: 'track' },
     { label: 'Send Documents', id: 'upload-docs' },

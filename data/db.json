@@ -1,0 +1,1200 @@
+{
+  "siteInfo": {
+    "businessName": "AL KHALIL CYBER CENTRE",
+    "tagline": "Aapka Vishwas, Hamari Pehchan - All Online, CSC, Printing & Photography Services",
+    "phone": "9259837361",
+    "whatsapp": "9259837361",
+    "email": "alkhalilcybercentre@gmail.com",
+    "address": "Near Main Bus Stand, Station Road, AL KHALIL CYBER CENTRE",
+    "cityState": "Uttar Pradesh, India",
+    "pincode": "243001",
+    "openingHours": "Mon - Sat: 8:00 AM - 9:00 PM | Sunday: 9:00 AM - 5:00 PM",
+    "googleMapsUrl": "https://maps.google.com/?q=Al+Khalil+Cyber+Centre",
+    "websiteUrl": "https://alkhalilcybercentre.com",
+    "aboutText": "AL KHALIL CYBER CENTRE is a premier authorized Digital Service & CSC Jan Seva Kendra providing high-speed digital documentation, online government scheme assistance, Aadhaar & PAN card processing, heavy-duty multi-color printing, custom wedding card offset printing, and high-definition 4K photography & videography. We are dedicated to delivering fast, accurate, and transparent services with complete customer satisfaction.",
+    "aboutHighlights": [
+      "100% Authorized & Secure Processing",
+      "Instant Work Tracking Token for Every Service",
+      "State-of-the-Art High-Speed Printing & Lamination",
+      "Cinematic 4K Wedding & Event Photography"
+    ],
+    "upiId": "9259837361@upi",
+    "metaTitle": "AL KHALIL CYBER CENTRE - Official Jan Seva Kendra, Printing & 4K Studio",
+    "metaDescription": "Official Portal of AL KHALIL CYBER CENTRE. Aadhaar, PAN, Govt Schemes, High-Speed Color Printing, Custom Wedding Cards & 4K Drone Photography.",
+    "metaKeywords": "AL KHALIL CYBER CENTRE, CSC Jan Seva Kendra, Aadhaar Card, PAN Card, Wedding Cards Printing, Flex Banner, Photography",
+    "ogTitle": "AL KHALIL CYBER CENTRE - Official Website",
+    "ogDescription": "Trusted and authorized CSC & Jan Seva Kendra services in Uttar Pradesh.",
+    "showPhoneButton": true,
+    "showWhatsAppButton": true,
+    "showFlashNews": true,
+    "showCertificates": true,
+    "showServices": true,
+    "showImportantServices": true,
+    "showRateList": true,
+    "showWorkTracker": true,
+    "showDocUpload": true,
+    "showAbout": true,
+    "showContact": true,
+    "maintenanceMode": false
+  },
+  "adminAuth": {
+    "pinHash": "$2b$10$BsmID82b.YS/JoNi6TKSU.mpDqEwSKqjclGIhH9XFQJCuAXb3K73u",
+    "updatedAt": "2026-09-19T14:46:11.858Z",
+    "failedAttempts": 0,
+    "biometricEnabled": false
+  },
+  "certificates": [
+    {
+      "id": "cert-1",
+      "name": "CSC e-Governance Jan Seva Kendra Authorization",
+      "organization": "CSC e-Governance Services India Limited / MeitY",
+      "certificateNumber": "CSC-UP-243001-8842",
+      "issueDate": "2022-04-15",
+      "description": "Authorized Village Level Entrepreneur (VLE) Center certified to deliver G2C (Government-to-Citizen) and B2C digital public services.",
+      "imageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=900&auto=format&fit=crop&q=80",
+      "displayOrder": 1,
+      "active": true,
+      "createdAt": "2025-09-19T14:46:11.858Z"
+    },
+    {
+      "id": "cert-2",
+      "name": "Authorized Digital Banking & AEPS Point Certificate",
+      "organization": "National Payments Corporation of India (NPCI) & Banking Partner",
+      "certificateNumber": "AEPS-CSP-992147",
+      "issueDate": "2023-01-10",
+      "description": "Certified Aadhaar Enabled Payment System (AEPS), Micro-ATM Cash Withdrawal, Money Transfer & Balance Inquiry Point.",
+      "imageUrl": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=900&auto=format&fit=crop&q=80",
+      "displayOrder": 2,
+      "active": true,
+      "createdAt": "2026-03-03T14:46:11.858Z"
+    },
+    {
+      "id": "cert-3",
+      "name": "Trade License & Commercial Printing Establishment Authorization",
+      "organization": "Directorate of Commercial Taxes & Municipal Authority",
+      "certificateNumber": "TL-COMM-UP-77215",
+      "issueDate": "2021-08-20",
+      "description": "Authorized commercial establishment for digital typesetting, multi-color offset printing, smart PVC card printing, and multimedia production.",
+      "imageUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=900&auto=format&fit=crop&q=80",
+      "displayOrder": 3,
+      "active": true,
+      "createdAt": "2025-05-07T14:46:11.858Z"
+    }
+  ],
+  "news": [
+    {
+      "id": "news-1",
+      "text": "Aadhaar Card Update & New Enrollment Services Active Daily (8 AM - 9 PM)",
+      "badge": "URGENT",
+      "link": "#services",
+      "active": true,
+      "order": 1,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "news-2",
+      "text": "Instant PAN Card via Biometric / e-KYC in Just 2 Hours",
+      "badge": "POPULAR",
+      "link": "#services",
+      "active": true,
+      "order": 2,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "news-3",
+      "text": "All Central & State Govt Job & Scholarship Online Forms Filling Available",
+      "badge": "NEW",
+      "link": "#services",
+      "active": true,
+      "order": 3,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "news-4",
+      "text": "Wedding Card, Visiting Card & Flex Banner High-Definition Printing with Special Discounts",
+      "badge": "OFFER",
+      "link": "#rates",
+      "active": true,
+      "order": 4,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "news-5",
+      "text": "4K Ultra HD Drone Shoot & Wedding Videography Bookings Open for Upcoming Season",
+      "badge": "FEATURED",
+      "link": "#contact",
+      "active": true,
+      "order": 5,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    }
+  ],
+  "notices": [
+    {
+      "id": "notice-1",
+      "title": "Urgent: UP Pre & Post Matric Scholarship 2026-27 Registration Deadline Approaching",
+      "category": "Urgent Announcement",
+      "description": "All Class 9th, 10th, 11th, 12th, and UG/PG College students must complete biometric e-KYC, Aadhaar NPCI bank account seeding, and caste/income certificate verification before the official portal closing date. Visit our kiosk with Marksheets, Bank Passbook, and Fee Receipts.",
+      "priority": "urgent",
+      "badgeText": "DEADLINE 31 AUG",
+      "actionUrl": "#services",
+      "actionText": "Apply at Cyber Centre",
+      "isPinned": true,
+      "active": true,
+      "publishDate": "2026-08-20",
+      "order": 1,
+      "createdAt": "2026-09-13T14:46:11.859Z"
+    },
+    {
+      "id": "notice-2",
+      "title": "New Scheme: PM Surya Ghar Muft Bijli Yojana - Free Solar Subsidy Applications Open",
+      "category": "Govt Scheme Update",
+      "description": "Eligible households can receive up to ₹78,000 direct bank subsidy for rooftop solar plant installation with 300 units free monthly electricity. Submit your latest Electricity Bill, Aadhaar Card, and Bank details for immediate registration.",
+      "priority": "high",
+      "badgeText": "NEW SCHEME",
+      "actionUrl": "#upload-docs",
+      "actionText": "Send Documents Online",
+      "isPinned": true,
+      "active": true,
+      "publishDate": "2026-08-22",
+      "order": 2,
+      "createdAt": "2026-09-15T14:46:11.859Z"
+    },
+    {
+      "id": "notice-3",
+      "title": "Centre Operational Timings & Public Holiday Schedule",
+      "category": "Holiday Notice",
+      "description": "Please note that AL KHALIL CYBER CENTRE is open daily from 8:00 AM to 9:00 PM. On Sundays and public holidays, the centre operates from 9:00 AM to 3:00 PM for urgent online form submissions and Jan Seva document processing.",
+      "priority": "normal",
+      "badgeText": "TIMINGS",
+      "actionUrl": "#contact",
+      "actionText": "View Location & Contact",
+      "isPinned": false,
+      "active": true,
+      "publishDate": "2026-08-24",
+      "order": 3,
+      "createdAt": "2026-09-17T14:46:11.859Z"
+    },
+    {
+      "id": "notice-4",
+      "title": "Mandatory Aadhaar e-KYC Verification for NFSA Ration Card Holders",
+      "category": "Govt Scheme Update",
+      "description": "All family members registered in National Food Security Act (NFSA) ration cards are required to complete POS Biometric e-KYC to ensure uninterrupted monthly food grain distribution. Free verification assistance available.",
+      "priority": "high",
+      "badgeText": "MANDATORY",
+      "actionUrl": "#services",
+      "actionText": "View Required Documents",
+      "isPinned": false,
+      "active": true,
+      "publishDate": "2026-08-25",
+      "order": 4,
+      "createdAt": "2026-09-18T14:46:11.859Z"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "test-1",
+      "customerName": "Mohammad Rizwan",
+      "customerCity": "Bareilly, UP",
+      "rating": 5,
+      "serviceAvail": "Aadhaar Update & Instant PAN Card",
+      "reviewText": "Bahut hi fast aur transparent service hai! Mera PAN Card sirf 2 ghante me ban gaya aur Aadhaar address update bhi usi din verify ho gaya. Real-time tracking token system se mujhe live status pata chalta raha. Best Jan Seva Kendra in town.",
+      "isApproved": true,
+      "isFeatured": true,
+      "responseFromAdmin": "Thank you Rizwan ji! We always strive to provide swift and reliable digital public services.",
+      "createdAt": "2026-09-07T14:46:11.859Z"
+    },
+    {
+      "id": "test-2",
+      "customerName": "Rajesh Kumar Sharma",
+      "customerCity": "Uttar Pradesh",
+      "rating": 5,
+      "serviceAvail": "Wedding Cards Printing (500 Units)",
+      "reviewText": "Hamare parivaar ki shaadi ke cards ki quality bohot shaandar aayi. Offset color printing, golden foil embossing aur box finish sab top class thi. Delivery committed date par mil gayi. Market se bohot affordable rate hai.",
+      "isApproved": true,
+      "isFeatured": true,
+      "responseFromAdmin": "Congratulations on the family wedding! It was our pleasure serving you.",
+      "createdAt": "2026-09-11T14:46:11.859Z"
+    },
+    {
+      "id": "test-3",
+      "customerName": "Farhan Qureshi",
+      "customerCity": "Rampur, UP",
+      "rating": 5,
+      "serviceAvail": "4K Wedding Photography & Drone Shoot",
+      "reviewText": "Al Khalil Cyber Centre ki media team ne hamare function me 4K cinematic video aur drone shoot kiya. Album design aur video editing bilkul Bollywood style ki tarah hai. 100% recommended!",
+      "isApproved": true,
+      "isFeatured": true,
+      "createdAt": "2026-09-14T14:46:11.859Z"
+    },
+    {
+      "id": "test-4",
+      "customerName": "Pooja Verma",
+      "customerCity": "Uttar Pradesh",
+      "rating": 5,
+      "serviceAvail": "UP Govt Job Online Application",
+      "reviewText": "Online form filling me koi bhi mistake nahi hoti. Photo, signature resizing aur online fee payment smoothly complete ho gaya. Document upload section se ghar baithe form bhejna bahut aasan hai.",
+      "isApproved": true,
+      "isFeatured": false,
+      "createdAt": "2026-09-16T14:46:11.859Z"
+    },
+    {
+      "id": "test-5",
+      "customerName": "Imran Malik",
+      "customerCity": "Uttar Pradesh",
+      "rating": 5,
+      "serviceAvail": "Ayushman Golden Card & PVC Smart Card",
+      "reviewText": "Poori family ka Ayushman Card biometric verification se 20 minute me ban gaya aur waterproof PVC smart card bhi print karke diya. Polite staff aur quick turnaround.",
+      "isApproved": true,
+      "isFeatured": false,
+      "createdAt": "2026-09-18T14:46:11.859Z"
+    }
+  ],
+  "banners": [
+    {
+      "id": "banner-1",
+      "title": "Complete Digital & Jan Seva Kendra Services",
+      "subtitle": "Aadhaar, PAN Card, Ayushman Card, Govt Schemes, Certificate Issuance & Fast Online Form Submission under one roof.",
+      "badgeText": "GOVERNMENT & CITIZEN SERVICES",
+      "imageUrl": "/uploads/banners/banner-1789829572513-m4ry6x.jpeg",
+      "buttonText": "Explore CSC Services",
+      "buttonLink": "#services",
+      "secondaryButtonText": "Track Your Work",
+      "secondaryButtonLink": "#track",
+      "slideDuration": 5,
+      "active": true,
+      "order": 1,
+      "bgColor": "from-slate-900 via-blue-950 to-slate-900",
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "banner-2",
+      "title": "Premium Printing & Custom Wedding Cards",
+      "subtitle": "High-Quality Digital Color Prints, Flex Banners, Posters, Visiting Cards, PVC ID Cards & Luxury Wedding Invitation Printing.",
+      "badgeText": "PRINTING STUDIO",
+      "imageUrl": "/uploads/banners/banner-1789829648791-4ypncx.jpeg",
+      "buttonText": "View Rate List",
+      "buttonLink": "#rates",
+      "secondaryButtonText": "Send Documents",
+      "secondaryButtonLink": "#upload-docs",
+      "slideDuration": 5,
+      "active": true,
+      "order": 2,
+      "bgColor": "from-slate-950 via-emerald-950 to-slate-900",
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "banner-3",
+      "title": "4K Ultra HD Photography & Drone Videography",
+      "subtitle": "Cinematic Wedding Shoots, Pre-Wedding, Birthday & Event Coverage, Drone Aerial Video Recording and Studio Portrait Editing.",
+      "badgeText": "MEDIA & STUDIO",
+      "imageUrl": "/uploads/banners/banner-1789829670246-nshpry.jpeg",
+      "buttonText": "Book Photo/Video Shoot",
+      "buttonLink": "#contact",
+      "secondaryButtonText": "Call 9259837361",
+      "secondaryButtonLink": "tel:9259837361",
+      "slideDuration": 6,
+      "active": true,
+      "order": 3,
+      "bgColor": "from-slate-950 via-purple-950 to-slate-900",
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "banner-1789829726646",
+      "title": "Al kHALIL CYBER centre",
+      "subtitle": "",
+      "badgeText": "",
+      "imageUrl": "/uploads/banners/banner-1789829704139-40pifx.jpeg",
+      "buttonText": "Learn More",
+      "buttonLink": "#services",
+      "slideDuration": 5,
+      "active": true,
+      "order": 4,
+      "bgColor": "from-slate-900 via-blue-950 to-slate-900",
+      "createdAt": "2026-09-19T14:55:26.646Z"
+    },
+    {
+      "id": "banner-1789829804057",
+      "title": "m",
+      "subtitle": "",
+      "badgeText": "",
+      "imageUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1600&q=80",
+      "buttonText": "Learn More",
+      "buttonLink": "#services",
+      "slideDuration": 5,
+      "active": true,
+      "order": 5,
+      "bgColor": "from-slate-900 via-blue-950 to-slate-900",
+      "createdAt": "2026-09-19T14:56:44.057Z"
+    }
+  ],
+  "services": [
+    {
+      "id": "srv-1",
+      "category": "JAN SEVA / CSC SERVICES",
+      "title": "Aadhaar Card Services",
+      "shortDescription": "Biometric update, address correction, mobile number link, PVC smart card print & child enrollment assistance.",
+      "fullDescription": "We provide prompt Aadhaar update assistance including demographic data modifications, photo/biometric update appointment booking, instant e-Aadhaar download, and durable waterproof PVC smart card printing.",
+      "requiredDocuments": [
+        "Existing Aadhaar / Enrollment Slip",
+        "Proof of Identity / Address",
+        "Active Mobile for OTP verification"
+      ],
+      "estimatedTime": "15 - 30 Minutes",
+      "priceStartingFrom": "₹30",
+      "icon": "ShieldCheck",
+      "isPopular": true,
+      "active": true,
+      "order": 1
+    },
+    {
+      "id": "srv-2",
+      "category": "JAN SEVA / CSC SERVICES",
+      "title": "PAN Card Services (New / Correction)",
+      "shortDescription": "Apply for fresh PAN card or corrections via NSDL / UTI with instant digital e-PAN generation.",
+      "fullDescription": "Get a new PAN card or correct name, DOB, father name, and address. Available through instant biometric thumb impression or Aadhaar OTP verification. Physical card delivered to your home address.",
+      "requiredDocuments": [
+        "Aadhaar Card",
+        "Passport size photo",
+        "Signature (if non-eKYC)"
+      ],
+      "estimatedTime": "2 Hours (e-PAN) / 7 Days (Physical)",
+      "priceStartingFrom": "₹150",
+      "icon": "CreditCard",
+      "isPopular": true,
+      "active": true,
+      "order": 2
+    },
+    {
+      "id": "srv-3",
+      "category": "JAN SEVA / CSC SERVICES",
+      "title": "Ayushman Bharat Golden Card",
+      "shortDescription": "Free ₹5 Lakh health insurance scheme registration and immediate card download.",
+      "fullDescription": "Check your family eligibility in the PMJAY / SECC list, complete biometric e-KYC, and get your authorized laminated Ayushman Card on the spot for cashless medical treatment across all empaneled hospitals.",
+      "requiredDocuments": [
+        "Ration Card / PM Letter",
+        "Aadhaar Card of all family members",
+        "Active Mobile Number"
+      ],
+      "estimatedTime": "20 Minutes",
+      "priceStartingFrom": "₹30",
+      "icon": "HeartPulse",
+      "isPopular": true,
+      "active": true,
+      "order": 3
+    },
+    {
+      "id": "srv-4",
+      "category": "JAN SEVA / CSC SERVICES",
+      "title": "Birth, Death & Caste/Income Certificates",
+      "shortDescription": "Official government revenue portal certificates (Jati, Aay, Niwas, Janam Praman Patra).",
+      "fullDescription": "Complete filing and tracking for Income Certificate (Aay Praman Patra), Caste Certificate (Jati Praman Patra), Domicile/Residence Certificate (Niwas Praman Patra), and Birth/Death certificates with online verification barcode.",
+      "requiredDocuments": [
+        "Aadhaar Card",
+        "Self Declaration Form (Swapr प्रमाणित)",
+        "Ration Card / Voter ID",
+        "Passport Photo"
+      ],
+      "estimatedTime": "3 - 7 Working Days",
+      "priceStartingFrom": "₹60",
+      "icon": "FileCheck",
+      "isPopular": false,
+      "active": true,
+      "order": 4
+    },
+    {
+      "id": "srv-5",
+      "category": "JAN SEVA / CSC SERVICES",
+      "title": "Online Govt Exam & Job Applications",
+      "shortDescription": "Zero-error form filling for SSC, UPSC, Railway, Police, Army, Teacher (TET/CTET) & State exams.",
+      "fullDescription": "Accurate online application submission with precise photo/signature dimension resizing, live camera verification capture, online fee payment, and multiple color printouts of the final confirmation page.",
+      "requiredDocuments": [
+        "Educational Marksheets (10th/12th/Graduation)",
+        "Aadhaar Card",
+        "Caste/Domicile Certificate",
+        "Photo & Signature"
+      ],
+      "estimatedTime": "20 - 45 Minutes",
+      "priceStartingFrom": "₹50",
+      "icon": "GraduationCap",
+      "isPopular": true,
+      "active": true,
+      "order": 5
+    },
+    {
+      "id": "srv-6",
+      "category": "JAN SEVA / CSC SERVICES",
+      "title": "Train, Flight & Bus Ticket Booking",
+      "shortDescription": "IRCTC authorized Tatkal & General train reservation, domestic flights, and sleeper bus ticketing.",
+      "fullDescription": "Fast, confirmed ticket booking for all Indian Railways trains, flights, and state/private AC buses. Includes instant SMS confirmation and printout with seat details.",
+      "requiredDocuments": [
+        "Passenger Names & Ages",
+        "Valid Govt ID Proof",
+        "Travel Dates & Destination"
+      ],
+      "estimatedTime": "10 Minutes",
+      "priceStartingFrom": "₹30",
+      "icon": "Train",
+      "isPopular": false,
+      "active": true,
+      "order": 6
+    },
+    {
+      "id": "srv-7",
+      "category": "JAN SEVA / CSC SERVICES",
+      "title": "Electricity & Utility Bill Payments",
+      "shortDescription": "Instant BBPS bill payment for Bijli, Water, Fastag, Gas Cylinder, DTH & Mobile Recharges.",
+      "fullDescription": "Pay power bills, water bills, LPG gas booking, broadband, and insurance premiums with instant payment receipt and digital ledger confirmation.",
+      "requiredDocuments": [
+        "Consumer Number / Account ID / Mobile Number"
+      ],
+      "estimatedTime": "5 Minutes",
+      "priceStartingFrom": "Free / ₹10",
+      "icon": "Zap",
+      "isPopular": false,
+      "active": true,
+      "order": 7
+    },
+    {
+      "id": "srv-8",
+      "category": "LOAN SERVICES",
+      "title": "Personal & Business Loan Assistance",
+      "shortDescription": "End-to-end guidance, documentation check, CIBIL score report, and online loan filing.",
+      "fullDescription": "We help small business owners, shopkeepers, and salaried individuals prepare document files for Mudra loans, MSME business credit, and personal loans across public and private banks.",
+      "requiredDocuments": [
+        "PAN & Aadhaar",
+        "6 Months Bank Statement",
+        "ITR / GST Details (if applicable)",
+        "Business Address Proof"
+      ],
+      "estimatedTime": "1 - 2 Days",
+      "priceStartingFrom": "Consultation Free",
+      "icon": "Coins",
+      "isPopular": true,
+      "active": true,
+      "order": 8
+    },
+    {
+      "id": "srv-9",
+      "category": "LOAN SERVICES",
+      "title": "Kisan Credit Card (KCC) & Agriculture Loan",
+      "shortDescription": "Assistance with Kisan credit schemes, PM Kisan Samman Nidhi e-KYC & land record verification.",
+      "fullDescription": "Assisting farmers with KCC documentation, Khatauni/Khasra verification, PM Kisan registration corrections, Aadhaar-NPCI bank account seeding, and subsidy claims.",
+      "requiredDocuments": [
+        "Land Khatauni / Khasra Copy",
+        "Aadhaar Card & Bank Passbook",
+        "PM Kisan Registration ID"
+      ],
+      "estimatedTime": "30 Minutes",
+      "priceStartingFrom": "₹50",
+      "icon": "Tractor",
+      "isPopular": false,
+      "active": true,
+      "order": 9
+    },
+    {
+      "id": "srv-10",
+      "category": "PRINTING SERVICES",
+      "title": "Wedding & Invitation Cards Printing",
+      "shortDescription": "Exclusive designer Hindi, English & Urdu wedding cards, multi-color offset & foil stamping.",
+      "fullDescription": "Choose from hundreds of premium card samples ranging from traditional royal wedding cards to modern laser-cut designs. High-speed accurate proofreading and bulk dispatch.",
+      "requiredDocuments": [
+        "Event Details / Family Names / Program Timings"
+      ],
+      "estimatedTime": "2 - 4 Days",
+      "priceStartingFrom": "₹8 / Card",
+      "icon": "MailOpen",
+      "isPopular": true,
+      "active": true,
+      "order": 10
+    },
+    {
+      "id": "srv-11",
+      "category": "PRINTING SERVICES",
+      "title": "Flex Banner & Vinyl Poster Printing",
+      "shortDescription": "Heavy-duty waterproof outdoor flex, glowing signboards, hoardings & event star-flex.",
+      "fullDescription": "Custom graphic design, high-DPI solvent printing, and eyelet punch finishing for shops, political campaigns, exhibitions, schools, and marriage functions.",
+      "requiredDocuments": [
+        "Text / Logo / Dimensions (in Feet)"
+      ],
+      "estimatedTime": "Same Day / 24 Hours",
+      "priceStartingFrom": "₹12 / Sq.Ft.",
+      "icon": "Image",
+      "isPopular": true,
+      "active": true,
+      "order": 11
+    },
+    {
+      "id": "srv-12",
+      "category": "PRINTING SERVICES",
+      "title": "Visiting Cards & Corporate Stationery",
+      "shortDescription": "Matte, gloss, velvet touch, embossed & metallic visiting cards with custom logo design.",
+      "fullDescription": "Professional 350 GSM business cards, letterheads, bill books, receipt vouchers, brochures, and promotional pamphlets for businesses.",
+      "requiredDocuments": [
+        "Business Name, Logo & Contact Details"
+      ],
+      "estimatedTime": "24 - 48 Hours",
+      "priceStartingFrom": "₹250 / 500 Cards",
+      "icon": "Briefcase",
+      "isPopular": false,
+      "active": true,
+      "order": 12
+    },
+    {
+      "id": "srv-13",
+      "category": "PRINTING SERVICES",
+      "title": "High-Speed Color & B/W Xerox / Lamination",
+      "shortDescription": "Crisp digital photocopy, book printing, spiral binding & heavy-gauge plastic lamination.",
+      "fullDescription": "Instant high-speed laser printing for office documents, school projects, legal stamp papers, certificates, and ID cards with crystal clear reproduction.",
+      "requiredDocuments": [
+        "Hardcopy or Softcopy (PDF / WhatsApp / Email)"
+      ],
+      "estimatedTime": "Instant",
+      "priceStartingFrom": "₹2 / Page",
+      "icon": "Printer",
+      "isPopular": true,
+      "active": true,
+      "order": 13
+    },
+    {
+      "id": "srv-14",
+      "category": "PRINTING SERVICES",
+      "title": "PVC Smart ID & Ayushman / Aadhaar Cards",
+      "shortDescription": "High-gloss thermal PVC card printing with durable waterproof coating.",
+      "fullDescription": "Convert soft copy Aadhaar, PAN, Driving License, Ayushman Card, Voter ID, and Employee badges into pocket-sized durable plastic cards.",
+      "requiredDocuments": [
+        "Digital PDF / Original Card Copy"
+      ],
+      "estimatedTime": "5 Minutes",
+      "priceStartingFrom": "₹50 / Card",
+      "icon": "IdCard",
+      "isPopular": true,
+      "active": true,
+      "order": 14
+    },
+    {
+      "id": "srv-15",
+      "category": "PHOTOGRAPHY & VIDEOGRAPHY",
+      "title": "Wedding & Reception 4K Videography",
+      "shortDescription": "Cinematic multi-camera setup, candid highlights, gimbal stabilization & master mixing.",
+      "fullDescription": "Capture your memorable wedding moments in breathtaking 4K resolution. Full team coverage with professional Sony/Canon cinema cameras, lighting kits, and master pen drive delivery.",
+      "requiredDocuments": [
+        "Event Dates & Venue Location"
+      ],
+      "estimatedTime": "Booking Basis",
+      "priceStartingFrom": "₹12,000",
+      "icon": "Video",
+      "isPopular": true,
+      "active": true,
+      "order": 15
+    },
+    {
+      "id": "srv-16",
+      "category": "PHOTOGRAPHY & VIDEOGRAPHY",
+      "title": "Drone Aerial 4K Camera Shoot",
+      "shortDescription": "Licensed high-altitude aerial drone video & panoramic photography for weddings & events.",
+      "fullDescription": "Spectacular bird-eye cinematic views of barat entry, varmala stage, outdoor venues, and grand family gatherings with experienced drone pilots.",
+      "requiredDocuments": [
+        "Event Schedule & Venue Clearance"
+      ],
+      "estimatedTime": "Event Basis",
+      "priceStartingFrom": "₹4,000 / Event",
+      "icon": "Camera",
+      "isPopular": true,
+      "active": true,
+      "order": 16
+    },
+    {
+      "id": "srv-17",
+      "category": "PHOTOGRAPHY & VIDEOGRAPHY",
+      "title": "Passport Size Photos & Studio Portrait",
+      "shortDescription": "Instant 8 / 16 / 32 copies with white / blue background as per official passport specs.",
+      "fullDescription": "Fast portrait photography with beauty touch-up, background replacement, suit/tie addition, and 5-minute glossy photo sheet printing.",
+      "requiredDocuments": [
+        "Walk-in at Centre"
+      ],
+      "estimatedTime": "5 Minutes",
+      "priceStartingFrom": "₹40 / 8 Photos",
+      "icon": "UserCheck",
+      "isPopular": true,
+      "active": true,
+      "order": 17
+    },
+    {
+      "id": "srv-18",
+      "category": "DIGITAL SERVICES",
+      "title": "Document Scanning & High-Res PDF Service",
+      "shortDescription": "Multi-page OCR scanning, compression, legal merge, and encryption.",
+      "fullDescription": "Digitize your land registry, property documents, certificates, books, and receipts into organized high-resolution search-enabled PDF files.",
+      "requiredDocuments": [
+        "Original Documents to scan"
+      ],
+      "estimatedTime": "Instant",
+      "priceStartingFrom": "₹5 / Page",
+      "icon": "ScanLine",
+      "isPopular": false,
+      "active": true,
+      "order": 18
+    },
+    {
+      "id": "srv-19",
+      "category": "DIGITAL SERVICES",
+      "title": "Photo Resize & Govt Portal Optimization",
+      "shortDescription": "Exact pixel dimensions, DPI, file size (KB limit) adjustment for official portals.",
+      "fullDescription": "Fix portal upload rejections instantly. We accurately optimize photos and signatures to match strict government guidelines (e.g. 20KB-50KB, 200x230 pixels, 300 DPI).",
+      "requiredDocuments": [
+        "Photo / Signature file"
+      ],
+      "estimatedTime": "Instant",
+      "priceStartingFrom": "₹20",
+      "icon": "Sliders",
+      "isPopular": false,
+      "active": true,
+      "order": 19
+    },
+    {
+      "id": "srv-20",
+      "category": "DIGITAL SERVICES",
+      "title": "Professional Resume / CV & Bio-Data Creation",
+      "shortDescription": "Modern corporate resumes, job biodata, matrimonial profiles in Hindi & English.",
+      "fullDescription": "Custom formatted ATS-friendly resumes for freshers, experienced professionals, teachers, and marriage bio-data with high-quality printing.",
+      "requiredDocuments": [
+        "Personal, Academic & Work Experience Details"
+      ],
+      "estimatedTime": "30 Minutes",
+      "priceStartingFrom": "₹70",
+      "icon": "FileText",
+      "isPopular": false,
+      "active": true,
+      "order": 20
+    }
+  ],
+  "rates": [
+    {
+      "id": "rate-1",
+      "category": "Printing & Xerox",
+      "serviceName": "Black & White Xerox / Print (Single Side)",
+      "price": "₹2",
+      "unit": "per page (A4)",
+      "notes": "High speed laser print",
+      "active": true,
+      "order": 1
+    },
+    {
+      "id": "rate-2",
+      "category": "Printing & Xerox",
+      "serviceName": "Black & White Print (Both Sides)",
+      "price": "₹3",
+      "unit": "per sheet (A4)",
+      "notes": "75 GSM premium paper",
+      "active": true,
+      "order": 2
+    },
+    {
+      "id": "rate-3",
+      "category": "Printing & Xerox",
+      "serviceName": "Full Color Inkjet / Laser Print",
+      "price": "₹5 - ₹10",
+      "unit": "per page",
+      "notes": "Vibrant color reproduction",
+      "active": true,
+      "order": 3
+    },
+    {
+      "id": "rate-4",
+      "category": "Printing & Xerox",
+      "serviceName": "Heavy Glossy Photo Paper Print (A4)",
+      "price": "₹30",
+      "unit": "per sheet",
+      "notes": "210 GSM high gloss photo paper",
+      "active": true,
+      "order": 4
+    },
+    {
+      "id": "rate-5",
+      "category": "Lamination & Binding",
+      "serviceName": "A4 Document Lamination",
+      "price": "₹15",
+      "unit": "per page",
+      "notes": "125 Micron thick waterproof film",
+      "active": true,
+      "order": 5
+    },
+    {
+      "id": "rate-6",
+      "category": "Lamination & Binding",
+      "serviceName": "ID Card / Aadhaar Lamination",
+      "price": "₹10",
+      "unit": "per card",
+      "notes": "Pocket pouch lamination",
+      "active": true,
+      "order": 6
+    },
+    {
+      "id": "rate-7",
+      "category": "Lamination & Binding",
+      "serviceName": "Spiral Binding with Plastic Cover",
+      "price": "₹30 - ₹60",
+      "unit": "per book",
+      "notes": "Up to 200 pages",
+      "active": true,
+      "order": 7
+    },
+    {
+      "id": "rate-8",
+      "category": "Smart Cards & IDs",
+      "serviceName": "PVC Smart Card Print (Aadhaar / PAN / Ayushman)",
+      "price": "₹50",
+      "unit": "per card",
+      "notes": "Original thermal UV printed PVC",
+      "active": true,
+      "order": 8
+    },
+    {
+      "id": "rate-9",
+      "category": "Smart Cards & IDs",
+      "serviceName": "Passport Size Photos (Instant 8 Copies)",
+      "price": "₹40",
+      "unit": "8 Photos",
+      "notes": "Ready in 5 minutes with retouching",
+      "active": true,
+      "order": 9
+    },
+    {
+      "id": "rate-10",
+      "category": "Smart Cards & IDs",
+      "serviceName": "Passport Size Photos (16 Copies)",
+      "price": "₹70",
+      "unit": "16 Photos",
+      "notes": "Waterproof studio finish",
+      "active": true,
+      "order": 10
+    },
+    {
+      "id": "rate-11",
+      "category": "Jan Seva & Govt Forms",
+      "serviceName": "New PAN Card Application",
+      "price": "₹150",
+      "unit": "Complete Filing",
+      "notes": "Includes Govt fee & tracking",
+      "active": true,
+      "order": 11
+    },
+    {
+      "id": "rate-12",
+      "category": "Jan Seva & Govt Forms",
+      "serviceName": "Income / Caste / Domicile Certificate Filing",
+      "price": "₹60",
+      "unit": "per certificate",
+      "notes": "E-District UP authorized filing",
+      "active": true,
+      "order": 12
+    },
+    {
+      "id": "rate-13",
+      "category": "Jan Seva & Govt Forms",
+      "serviceName": "Online Competitive Exam Form Submission",
+      "price": "₹50 - ₹100",
+      "unit": "per application",
+      "notes": "Zero error guarantee with printout",
+      "active": true,
+      "order": 13
+    },
+    {
+      "id": "rate-14",
+      "category": "Jan Seva & Govt Forms",
+      "serviceName": "Ayushman Card Download & Lamination",
+      "price": "₹30",
+      "unit": "per member",
+      "notes": "Instant authorization check",
+      "active": true,
+      "order": 14
+    },
+    {
+      "id": "rate-15",
+      "category": "Banners & Cards",
+      "serviceName": "Wedding Invitation Cards (Classic)",
+      "price": "₹8 - ₹18",
+      "unit": "per card",
+      "notes": "Includes envelope & screen printing",
+      "active": true,
+      "order": 15
+    },
+    {
+      "id": "rate-16",
+      "category": "Banners & Cards",
+      "serviceName": "Premium Luxury Laser-Cut Wedding Cards",
+      "price": "₹25 - ₹75",
+      "unit": "per card",
+      "notes": "Foil embossing with butter paper",
+      "active": true,
+      "order": 16
+    },
+    {
+      "id": "rate-17",
+      "category": "Banners & Cards",
+      "serviceName": "Outdoor Flex Banner Printing",
+      "price": "₹12 - ₹18",
+      "unit": "per sq. ft.",
+      "notes": "Star flex with border eyelets",
+      "active": true,
+      "order": 17
+    },
+    {
+      "id": "rate-18",
+      "category": "Banners & Cards",
+      "serviceName": "Business Visiting Cards (500 Matte Laminated)",
+      "price": "₹450",
+      "unit": "per box (500 pcs)",
+      "notes": "350 GSM double side print",
+      "active": true,
+      "order": 18
+    }
+  ],
+  "jobs": [
+    {
+      "id": "job-1",
+      "trackingCode": "AK-59124",
+      "customerName": "Mohammad Imran",
+      "customerMobile": "9876543210",
+      "serviceName": "Aadhaar Address Update & PVC Card Print",
+      "status": "Ready",
+      "statusNotes": "Your PVC Smart Card is printed and ready for pickup from our counter.",
+      "estimatedDelivery": "Ready for Pickup",
+      "priceTotal": "₹80",
+      "amountPaid": "₹80",
+      "createdAt": "2026-09-18T02:46:11.859Z",
+      "updatedAt": "2026-09-19T12:46:11.859Z"
+    },
+    {
+      "id": "job-2",
+      "trackingCode": "AK-78210",
+      "customerName": "Rajesh Kumar",
+      "customerMobile": "9837123456",
+      "serviceName": "UP Police Constable Online Application Form",
+      "status": "Completed",
+      "statusNotes": "Form submitted successfully. Confirmation slip & fee receipt handed over.",
+      "estimatedDelivery": "Completed",
+      "priceTotal": "₹100",
+      "amountPaid": "₹100",
+      "createdAt": "2026-09-15T14:46:11.859Z",
+      "updatedAt": "2026-09-16T14:46:11.859Z"
+    },
+    {
+      "id": "job-3",
+      "trackingCode": "AK-39148",
+      "customerName": "Arif Khan",
+      "customerMobile": "9259837361",
+      "serviceName": "Wedding Card Printing (400 Units)",
+      "status": "Processing",
+      "statusNotes": "Printing under progress on offset machine. Binding & packing in progress.",
+      "estimatedDelivery": "Tomorrow, 4:00 PM",
+      "priceTotal": "₹4,800",
+      "amountPaid": "₹2,000 Advance",
+      "createdAt": "2026-09-19T02:46:11.859Z",
+      "updatedAt": "2026-09-19T13:46:11.859Z"
+    }
+  ],
+  "uploadedDocuments": [
+    {
+      "id": "doc-1",
+      "customerName": "Sanjay Sharma",
+      "customerMobile": "9123456780",
+      "serviceRequested": "New PAN Card Application",
+      "note": "Need urgent processing for bank loan purpose please.",
+      "trackingCode": "AK-66192",
+      "fileName": "sample_pan_docs.pdf",
+      "originalName": "Aadhaar_Front_Back.pdf",
+      "fileSize": 142000,
+      "mimeType": "application/pdf",
+      "filePath": "/app/applet/uploads/docs/sample_doc.pdf",
+      "createdAt": "2026-09-19T09:46:11.859Z",
+      "status": "New"
+    }
+  ],
+  "contactMessages": [
+    {
+      "id": "msg-1",
+      "name": "Vipin Verma",
+      "phone": "9897001122",
+      "serviceInterest": "Wedding Photography & Drone Shoot",
+      "message": "Need quotation for 2 days wedding function in December.",
+      "createdAt": "2026-09-18T14:46:11.859Z",
+      "isRead": false
+    }
+  ],
+  "chatbotConfig": {
+    "enabled": true,
+    "botName": "Al Khalil Smart Assistant",
+    "botSubtitle": "Instant Help • Docs • Timings • Live Token Tracking",
+    "welcomeMessage": "Assalam-o-Alaikum & Welcome to Al Khalil Cyber Centre (Kheda Tanda)! 👋\n\nI can help you with required documents for PAN/Aadhaar/Certificates, shop timings, exact location in Kheda Tanda, prices, or live work tracking. How may I help you today?",
+    "whatsappFallbackNumber": "9259837361",
+    "quickPrompts": [
+      "📋 PAN Card Documents",
+      "🆔 Aadhaar Update Docs",
+      "📍 Location in Kheda Tanda",
+      "⏰ Shop Timings",
+      "📜 Aay/Jaati/Niwas Docs",
+      "🔍 Track My Work Token",
+      "💰 Price & Rate List",
+      "🖨️ Wedding Card Printing"
+    ],
+    "placeholderText": "Ask anything (e.g. PAN docs, timings, tracking token #)..."
+  },
+  "faqs": [
+    {
+      "id": "faq-1",
+      "category": "Documents Required",
+      "question": "What documents are required for a New PAN Card or Correction?",
+      "keywords": "pan, pan card, new pan, pan document, minor pan, uti, nsdl, correction, pan apply, pan form, pan card fees",
+      "answer": "**Documents Required for PAN Card Application:**\n\n1. **Aadhaar Card** (Name & Date of Birth must be fully clear)\n2. **2 Recent Passport-size Color Photos** (clean background)\n3. **Active Mobile Number** (for OTP authentication & e-Sign)\n4. **For Minor (<18 yrs)**: Father/Mother's Aadhaar Card & signature required.\n\n⏱️ **Processing Speed:** Instant digital e-PAN generated within 2 hours. Physical original PVC plastic card dispatched directly to your home address in 7–10 days.\n\n💰 **Standard Fee:** ₹110 – ₹150 only.",
+      "suggestedQuestions": [
+        "Aadhaar Update Documents",
+        "Shop Timings & Location",
+        "Track My Work Token"
+      ],
+      "actionText": "Apply on WhatsApp",
+      "actionUrl": "https://wa.me/919259837361?text=Hello%20Al%20Khalil%20Cyber%20Centre,%20I%20want%20to%20apply%20for%20a%20PAN%20Card",
+      "active": true,
+      "order": 1,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-2",
+      "category": "Documents Required",
+      "question": "What documents are needed for Aadhaar Card update, mobile link, or address change?",
+      "keywords": "aadhaar, aadhar, aadhar card, update, name change, dob, address, mobile link, biometric, pvc aadhar, uidai",
+      "answer": "**Aadhaar Update & Correction Guidelines:**\n\n📌 **Mobile Number / Email Link / Biometric:** No physical documents required! Only customer physical biometric (fingerprint) presence is needed.\n📌 **Name / DOB Correction:** 10th Class Marksheet, Birth Certificate, or Passport.\n📌 **Address Change:** Ration Card, Electricity Bill, Bank Passbook (with photo), Domicile Certificate (Niwas Praman Patra), or Voter ID.\n\n🪪 **Smart PVC Card Printing:** Instant high-definition waterproof PVC card print in just 5 minutes on our heavy-duty card printers!",
+      "suggestedQuestions": [
+        "Aay/Jaati/Niwas Docs",
+        "Shop Timings",
+        "Check Price List"
+      ],
+      "actionText": "View PVC Card Rates",
+      "actionUrl": "#rates",
+      "active": true,
+      "order": 2,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-3",
+      "category": "Timings & Location",
+      "question": "What are your shop opening and closing hours?",
+      "keywords": "timing, timings, open, close, hours, kab khulta hai, kab band, sunday, samay, time, holiday",
+      "answer": "**Al Khalil Cyber Centre Working Hours:**\n\n🕒 **Monday to Saturday:** 8:00 AM – 9:00 PM (Continuous full-day service)\n🕒 **Sunday:** 9:00 AM – 5:00 PM\n\n✨ **Emergency Digital Work & Urgent Forms:** Online examination form submissions and urgent document printouts can also be sent via WhatsApp at **9259837361** 24/7.",
+      "suggestedQuestions": [
+        "Exact Location in Kheda Tanda",
+        "List of Services",
+        "Price List"
+      ],
+      "actionText": "Call Center: 9259837361",
+      "actionUrl": "tel:9259837361",
+      "active": true,
+      "order": 3,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-4",
+      "category": "Timings & Location",
+      "question": "Where is Al Khalil Cyber Centre located in Kheda Tanda?",
+      "keywords": "location, address, kheda tanda, kahan hai, shop address, route, map, tanda, near, direction, landmark, rasta",
+      "answer": "**Our Exact Address & Landmark in Kheda Tanda:**\n\n📍 **AL KHALIL CYBER CENTRE**\nStation Road / Near Main Bus Stand, **Kheda Tanda**, Uttar Pradesh, India - PIN: 243001.\n\n🚗 **How to Reach:** Located prominently on the main commercial road in Kheda Tanda, easily accessible by bike, e-rickshaw, or foot with dedicated customer space.\n\n🗺️ **Google Maps Navigation:** Click the button below to get direct turn-by-turn map directions!",
+      "suggestedQuestions": [
+        "Shop Timings",
+        "List of Services",
+        "Contact on WhatsApp"
+      ],
+      "actionText": "Open in Google Maps",
+      "actionUrl": "https://maps.google.com/?q=Al+Khalil+Cyber+Centre+Kheda+Tanda",
+      "active": true,
+      "order": 4,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-5",
+      "category": "Documents Required",
+      "question": "What documents are required for Aay (Income), Jaati (Caste), and Niwas (Domicile) Praman Patra?",
+      "keywords": "aay, jaati, niwas, caste, income, domicile, praman patra, certificate, e-district, up edistrict, edistrict",
+      "answer": "**Documents for UP e-District Certificates (Aay / Jaati / Niwas):**\n\n1. **Aadhaar Card** of the Applicant\n2. **Ration Card** or Family Register Nakal (Parivar Register Copy)\n3. **1 Passport Size Color Photo**\n4. **Self-Declaration Form (Swaprameet Praman Patra)** (We fill and generate this for you instantly at the shop)\n5. **For Jaati (Caste)**: Father's/family caste certificate or ancestral record\n\n⏱️ **Delivery Time:** 5 to 7 working days by Lekhpal/Tehsildar verification. Digitally signed government certificate issued with QR code verification.",
+      "suggestedQuestions": [
+        "UP Scholarship Documents",
+        "Ration Card e-KYC",
+        "Shop Timings"
+      ],
+      "actionText": "Upload Docs Online",
+      "actionUrl": "#upload-docs",
+      "active": true,
+      "order": 5,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-6",
+      "category": "Documents Required",
+      "question": "What documents are required for Passport online application?",
+      "keywords": "passport, tatkaal, appointment, foreign, travel, psk, passport seva, passport apply",
+      "answer": "**Documents for Fresh Passport / Renewal Application:**\n\n1. **Aadhaar Card** (Name, DOB & Address must be updated)\n2. **PAN Card**\n3. **10th Class Marksheet / Passing Certificate** (for Non-ECR status)\n4. **Proof of Address** (Bank Passbook with photo, Voter ID, or Electricity Bill)\n5. **Active Phone Number & Email ID**\n\n🎯 We handle entire appointment slot booking at PSK Bareilly / Moradabad / Ghaziabad, fee payment, and document preparation.",
+      "suggestedQuestions": [
+        "PAN Card Documents",
+        "Track My Work",
+        "Shop Timings & Location"
+      ],
+      "actionText": "Book Passport Slot",
+      "actionUrl": "https://wa.me/919259837361?text=Hello%20Al%20Khalil%20Cyber%20Centre,%20I%20want%20to%20apply%20for%20a%20Passport",
+      "active": true,
+      "order": 6,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-7",
+      "category": "Services",
+      "question": "How to make Ayushman Golden Card and what documents are required?",
+      "keywords": "ayushman, golden card, 5 lakh, pmjay, ilaj, hospital, health card, bima, ayushman bharat",
+      "answer": "**Ayushman Bharat Golden Card (₹5 Lakh Free Treatment Scheme):**\n\n1. **Ration Card (Patra Grihasti with 6+ units or Antyodaya Red Card)** OR SECC/PM-JAY Family Letter\n2. **Aadhaar Card** of all eligible family members\n3. **Aadhaar-Linked Mobile Phone** for instant OTP\n\n🖨️ Instant plastic PVC Ayushman Card printed directly at our centre in 5 minutes!",
+      "suggestedQuestions": [
+        "Ration Card e-KYC",
+        "Aadhaar Card Update",
+        "Shop Timings"
+      ],
+      "actionText": "Check Eligibility on WhatsApp",
+      "actionUrl": "https://wa.me/919259837361?text=I%20want%20to%20check%20Ayushman%20Card%20eligibility",
+      "active": true,
+      "order": 7,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-8",
+      "category": "Documents Required",
+      "question": "What are the required documents for UP Scholarship & National Scholarship?",
+      "keywords": "scholarship, wazifa, stipend, fee refund, pre matric, post matric, nsp, scholarship form",
+      "answer": "**Documents for UP Scholarship & NSP Portal:**\n\n1. **Previous Class Marksheet**\n2. **Current Year College / School Fee Receipt & Admission ID**\n3. **Aadhaar Card** (Mobile linked for DigiLocker verification)\n4. **Bank Account Passbook** (Aadhaar Seeded & NPCI Active)\n5. **Income Certificate (Aay Praman Patra)** (Not older than 3 years)\n6. **Caste Certificate (Jaati Praman Patra)** (For OBC/SC/ST/Minority)\n7. **Domicile (Niwas Praman Patra)**\n8. **1 Passport Size Photograph**\n\n⚠️ Ensure your bank account has NPCI/DBT mapping active to avoid payment failure!",
+      "suggestedQuestions": [
+        "Aay/Jaati/Niwas Docs",
+        "Shop Timings",
+        "Upload Documents"
+      ],
+      "actionText": "Upload Docs for Form",
+      "actionUrl": "#upload-docs",
+      "active": true,
+      "order": 8,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-9",
+      "category": "Documents Required",
+      "question": "What documents are required for Learning & Permanent Driving License?",
+      "keywords": "dl, driving license, learning, sarathi, vehicle, driving, licence, parivahan, rto",
+      "answer": "**Documents for Driving License (Parivahan Sarathi):**\n\n1. **Aadhaar Card** (Used for faceless online Aadhaar-authenticated test)\n2. **Proof of Age / Education** (10th Marksheet or School Transfer Cert)\n3. **Blood Group Certificate / Details**\n4. **Passport Size Photo & Signature Scan**\n\n🚗 We prepare online LL mock tests, appointment slot bookings, and instant application fee payment.",
+      "suggestedQuestions": [
+        "PAN Card Documents",
+        "Price List",
+        "Shop Timings"
+      ],
+      "actionText": "Contact for License",
+      "actionUrl": "#contact",
+      "active": true,
+      "order": 9,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-10",
+      "category": "Services",
+      "question": "How to complete PM Kisan e-KYC, new registration, or check installments?",
+      "keywords": "pm kisan, kisan, kathauni, 2000, installment, dbt, land, kheti, kisan samman nidhi, ekyc",
+      "answer": "**PM Kisan Samman Nidhi Services (₹6,000/year Scheme):**\n\n🌾 **Documents for New Farmer Registration:**\n1. Land Record (Khatoni / Khatauni Copy)\n2. Aadhaar Card\n3. Bank Passbook (DBT Active)\n4. Mobile linked with Aadhaar\n\n🌾 **Biometric e-KYC & Land Seeding:** Instant thumb biometric e-KYC available directly at our shop in 2 minutes!",
+      "suggestedQuestions": [
+        "Shop Timings",
+        "Aadhaar Card Update",
+        "Track My Work"
+      ],
+      "actionText": "Do Biometric e-KYC",
+      "actionUrl": "#services",
+      "active": true,
+      "order": 10,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-11",
+      "category": "Services",
+      "question": "How to add a new family member, do e-KYC, or apply for a new Ration Card?",
+      "keywords": "ration, rashan, fcs, quota, dealer, new ration, name add, ration ekyc, ration card",
+      "answer": "**Ration Card (FCS UP Portal) Documentation:**\n\n1. **Family Head (Mukhiya)** Aadhaar Card & Bank Passbook\n2. **Aadhaar Cards of All Family Members** (including children)\n3. **Income Certificate (Aay Praman Patra)**\n4. **Electricity Bill / Gas Connection Book (LPG)**\n5. **Recent Passport Size Photo** of Female Family Head\n\n⏱️ We also provide instant digital Ration Card Slip download and color lamination.",
+      "suggestedQuestions": [
+        "Aay/Jaati/Niwas Docs",
+        "Shop Timings",
+        "Price List"
+      ],
+      "actionText": "Check Ration Status",
+      "actionUrl": "#services",
+      "active": true,
+      "order": 11,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-12",
+      "category": "Pricing & Rates",
+      "question": "What types of Wedding Cards, Flex Banners, and Printing services do you offer?",
+      "keywords": "wedding card, shadi card, printing, offset, flex, banner, card design, visiting card, pamphlet, bill book",
+      "answer": "**High-Speed Printing & Custom Designing Services:**\n\n💍 **Wedding Cards (Shadi Cards):**\n• Single color, Multi-color, Laser Cut, Velvet, Box Cards & Invitation Leaflets (Hindi, Urdu, English matter).\n• Starting from ₹5/card up to premium luxury sets.\n\n🪧 **Flex Banners & Posters:** 100% waterproof high-density flex for shops, political campaigns, coaching classes, and events. Starting at ₹12/sq.ft.\n\n📄 **Visiting Cards & Bill Books:** Matte laminated business cards (₹450/500 pcs), custom duplicate/triplicate receipt books.",
+      "suggestedQuestions": [
+        "4K Photography Services",
+        "Shop Timings",
+        "Contact Center"
+      ],
+      "actionText": "View Full Rate Chart",
+      "actionUrl": "#rates",
+      "active": true,
+      "order": 12,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-13",
+      "category": "Services",
+      "question": "What 4K Photography and Drone Videography packages do you provide?",
+      "keywords": "photo, video, 4k, drone, camera, studio, wedding photography, album, pre wedding, passport photo",
+      "answer": "**Al Khalil 4K Studio & Multimedia Solutions:**\n\n📸 **Instant Passport Photos:** 8/16/32 high-resolution studio photos ready in 5 minutes with professional skin retouching (₹50 for 8 photos).\n\n🎥 **Wedding & Event Coverage:** 4K Ultra HD video cameras, cinematic gimbal stabilization, aerial 4K drone cinematography, traditional candid photography, and luxury gloss/matte photo albums.",
+      "suggestedQuestions": [
+        "Location in Kheda Tanda",
+        "View Full Rate List",
+        "Shop Timings"
+      ],
+      "actionText": "Book Photography",
+      "actionUrl": "#contact",
+      "active": true,
+      "order": 13,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-14",
+      "category": "Work Tracking",
+      "question": "How can I track the status of my submitted documents or application?",
+      "keywords": "track, token, status, tracking, mera kaam, receipt, status check, ak-, work progress",
+      "answer": "**Instant Live Work Tracking:**\n\n🔍 You can track any submitted application, print job, or certificate simply by typing your 5-digit **Token Number (e.g. AK-59124)** directly into this chat, or in the website Work Tracker section!\n\n💡 Try typing your token code like `AK-59124` right now to test live tracking.",
+      "suggestedQuestions": [
+        "Shop Timings",
+        "PAN Card Documents",
+        "Price List"
+      ],
+      "actionText": "Open Work Tracker",
+      "actionUrl": "#track",
+      "active": true,
+      "order": 14,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    },
+    {
+      "id": "faq-15",
+      "category": "Pricing & Rates",
+      "question": "What are your standard rates for photocopy, color print, and online forms?",
+      "keywords": "rate, price, charge, fees, cost, kitna paisa, kitne me, rate chart, price list, xerox",
+      "answer": "**Standard Transparent Price Overview:**\n\n• **B&W Xerox / Print:** ₹2 / page\n• **Color High-Res Print:** ₹5 / page\n• **Lamination (Heavy 250 Micron):** ₹15 / doc\n• **Smart PVC Card (Aadhaar/PAN/Ayushman):** ₹50 / card\n• **Govt Online Form Filling:** ₹50 – ₹100\n• **New PAN Card Application:** ₹120\n• **Income/Caste/Domicile Certificate:** ₹100\n• **Passport Size Photos (8 pcs):** ₹50\n\nClick below to inspect our full categorized price chart!",
+      "suggestedQuestions": [
+        "PAN Card Documents",
+        "Shop Timings & Location",
+        "Track My Work Token"
+      ],
+      "actionText": "View Complete Price List",
+      "actionUrl": "#rates",
+      "active": true,
+      "order": 15,
+      "createdAt": "2026-09-19T14:46:11.859Z"
+    }
+  ]
+}

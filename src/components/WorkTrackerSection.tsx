@@ -259,6 +259,38 @@ export const WorkTrackerSection: React.FC<WorkTrackerSectionProps> = ({ siteInfo
                 </p>
               </div>
 
+              {/* Charge Breakdown if available */}
+              {trackedJob.chargeBreakdown && trackedJob.chargeBreakdown.length > 0 && (
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-slate-400 font-bold text-[11px]">
+                    <span className="uppercase tracking-wider text-slate-400 font-black">Fee Breakdown</span>
+                    <span className="text-emerald-400 text-[10px] bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
+                      Transparent Billing
+                    </span>
+                  </div>
+                  <div className="space-y-1.5 divide-y divide-slate-900">
+                    {trackedJob.chargeBreakdown.map((item, idx) => {
+                      const g = Number(item.govtFee) || 0;
+                      const c = Number(item.centreCharge) || 0;
+                      return (
+                        <div key={idx} className="pt-1.5 flex flex-wrap items-center justify-between text-[11px] text-slate-300 gap-1">
+                          <span className="font-medium text-white">{item.name}</span>
+                          <span className="font-mono text-slate-400">
+                            Govt: <span className="text-blue-300">₹{g}</span> • Centre: <span className="text-indigo-300">₹{c}</span> • Total: <strong className="text-emerald-400">₹{g + c}</strong>
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {(trackedJob.govtFee !== undefined || trackedJob.centreCharges !== undefined) && (
+                    <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-bold">
+                      <span className="text-blue-300">Govt Fee Total: ₹{Number(trackedJob.govtFee || 0).toLocaleString('en-IN')}</span>
+                      <span className="text-indigo-300">Centre Charges: ₹{Number(trackedJob.centreCharges || 0).toLocaleString('en-IN')}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Pricing & Support Row */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
                 {trackedJob.priceTotal && (

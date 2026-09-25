@@ -14,22 +14,29 @@ import {
   FlashNewsItem,
   BannerItem,
   ServiceItem,
-  RateItem
+  RateItem,
+  NoticeItem,
+  TestimonialItem
 } from './types';
 import {
   fetchSiteInfo,
   fetchNews,
   fetchBanners,
   fetchServices,
-  fetchRates
+  fetchRates,
+  fetchNotices,
+  fetchTestimonials
 } from './lib/api';
 
 import { Navbar } from './components/Navbar';
 import { FlashNewsTicker } from './components/FlashNewsTicker';
 import { HeroSlider } from './components/HeroSlider';
+import { NoticeBoard } from './components/NoticeBoard';
 import { ImportantServices } from './components/ImportantServices';
+import { AiToolsSection } from './components/AiToolsSection';
 import { ServicesExplorer } from './components/ServicesExplorer';
 import { RateListSection } from './components/RateListSection';
+import { TestimonialsSection } from './components/TestimonialsSection';
 import { CertificatesSection } from './components/CertificatesSection';
 import { WorkTrackerSection } from './components/WorkTrackerSection';
 import { DocumentUploadSection } from './components/DocumentUploadSection';
@@ -37,6 +44,7 @@ import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { AdminPanel } from './components/AdminPanel';
+import { ChatAssistant } from './components/ChatAssistant';
 
 export function App() {
   // Public Data State
@@ -64,6 +72,8 @@ export function App() {
   const [news, setNews] = useState<FlashNewsItem[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [rates, setRates] = useState<RateItem[]>([]);
+  const [notices, setNotices] = useState<NoticeItem[]>([]);
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
 
   // Navigation & Modals
   const [activeSection, setActiveSection] = useState<string>('home');
@@ -75,12 +85,14 @@ export function App() {
   // Load Public Data
   const loadData = async () => {
     try {
-      const [info, bannersData, newsData, servicesData, ratesData] = await Promise.all([
+      const [info, bannersData, newsData, servicesData, ratesData, noticesData, testimonialsData] = await Promise.all([
         fetchSiteInfo(),
         fetchBanners(),
         fetchNews(),
         fetchServices(),
-        fetchRates()
+        fetchRates(),
+        fetchNotices(),
+        fetchTestimonials()
       ]);
 
       if (info) setSiteInfo(info);
@@ -88,6 +100,8 @@ export function App() {
       if (newsData) setNews(newsData);
       if (servicesData) setServices(servicesData);
       if (ratesData) setRates(ratesData);
+      if (noticesData) setNotices(noticesData);
+      if (testimonialsData) setTestimonials(testimonialsData);
     } catch (err) {
       console.error('Error fetching site data:', err);
     } finally {
@@ -167,6 +181,12 @@ export function App() {
         <HeroSlider banners={banners} onNavigate={scrollToSection} />
       </div>
 
+      {/* 3.5. Digital Notice Board / Flash Alerts Section */}
+      <NoticeBoard
+        notices={notices}
+        onActionClick={scrollToSection}
+      />
+
       {/* 4. Key Highlighted Services */}
       <ImportantServices
         services={services}
@@ -174,6 +194,9 @@ export function App() {
         onSelectService={(s) => setSelectedServiceModal(s)}
         onNavigate={scrollToSection}
       />
+
+      {/* 4.5. Official AI-Powered Suite (Voice Converter, Search Assistant, Image-to-Video, Transcription) */}
+      <AiToolsSection siteInfo={siteInfo} />
 
       {/* 5. Complete Services Explorer (Category Tabs + Search + Details Modal) */}
       <ServicesExplorer
@@ -188,6 +211,12 @@ export function App() {
         rates={rates}
         siteInfo={siteInfo}
         onNavigate={scrollToSection}
+      />
+
+      {/* 6.5. Customer Testimonials & Star Ratings Section */}
+      <TestimonialsSection
+        testimonials={testimonials}
+        onReviewSubmitted={loadData}
       />
 
       {/* 7. Official Certificates & Authorizations Showcase */}
@@ -216,13 +245,13 @@ export function App() {
       />
 
       {/* =========================================================================
-          FLOATING QUICK-ACTION HUB (CALL NOW + WHATSAPP + SCROLL TO TOP)
+          FLOATING QUICK-ACTION HUB (CALL NOW + WHATSAPP ON LEFT)
       ========================================================================= */}
-      <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3">
+      <div className="fixed bottom-5 left-4 sm:left-6 z-40 flex flex-col items-start gap-2.5">
         {/* Floating Call Button */}
         <a
           href={`tel:${siteInfo.phone}`}
-          className="flex items-center gap-2 px-5 py-3 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all font-black text-xs uppercase tracking-wider group border border-indigo-400/30"
+          className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all font-black text-xs uppercase tracking-wider group border border-indigo-400/30"
           title={`Call ${siteInfo.phone}`}
         >
           <Phone className="w-4 h-4" />
@@ -234,24 +263,29 @@ export function App() {
           href={`https://wa.me/91${siteInfo.whatsapp.replace(/\D/g, '')}?text=Hello%20AL%20KHALIL%20CYBER%20CENTRE,%20I%20have%20an%20inquiry.`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-5 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all font-black text-xs uppercase tracking-wider border border-emerald-400/30"
+          className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all font-black text-xs uppercase tracking-wider border border-emerald-400/30"
           title="Chat on WhatsApp"
         >
           <MessageCircle className="w-4 h-4" />
           <span className="hidden sm:inline">WHATSAPP</span>
         </a>
-
-        {/* Back to top button */}
-        {showBackToTop && (
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="p-3 rounded-full bg-slate-800 hover:bg-slate-700 text-white shadow-lg border border-slate-700 hover:scale-110 active:scale-95 transition-all cursor-pointer"
-            aria-label="Back to top"
-          >
-            <ChevronUp className="w-5 h-5" />
-          </button>
-        )}
       </div>
+
+      {/* Back to top button */}
+      {showBackToTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-24 right-5 z-40 p-3 rounded-full bg-slate-800/90 hover:bg-slate-700 text-white shadow-lg border border-slate-700 hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-sm"
+          aria-label="Back to top"
+        >
+          <ChevronUp className="w-4 h-4" />
+        </button>
+      )}
+
+      {/* =========================================================================
+          FLOATING AI CHATBOT & 24/7 SMART ASSISTANT WIDGET
+      ========================================================================= */}
+      <ChatAssistant />
 
       {/* =========================================================================
           ADMIN PANEL MODAL OVERLAY (PIN AUTHENTICATED)
