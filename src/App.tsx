@@ -7,7 +7,11 @@ import {
   ChevronUp,
   UserCog,
   RefreshCw,
-  Sparkles
+  Sparkles,
+  ShieldAlert,
+  ShieldCheck,
+  ChevronRight,
+  X
 } from 'lucide-react';
 import {
   SiteInfo,
@@ -45,6 +49,7 @@ import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { AdminPanel } from './components/AdminPanel';
 import { ChatAssistant } from './components/ChatAssistant';
+import { CyberSafetyPage } from './components/CyberSafetyPage';
 
 export function App() {
   // Public Data State
@@ -77,6 +82,8 @@ export function App() {
 
   // Navigation & Modals
   const [activeSection, setActiveSection] = useState<string>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'cyber-safety'>('home');
+  const [showFirstVisitNotice, setShowFirstVisitNotice] = useState<boolean>(false);
   const [showAdminModal, setShowAdminModal] = useState<boolean>(false);
   const [selectedServiceModal, setSelectedServiceModal] = useState<ServiceItem | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -125,6 +132,43 @@ export function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Hash listener for direct #cyber-safety URL navigation
+  useEffect(() => {
+    if (window.location.hash === '#cyber-safety') {
+      setCurrentView('cyber-safety');
+    }
+
+    const handleHashChange = () => {
+      if (window.location.hash === '#cyber-safety') {
+        setCurrentView('cyber-safety');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (window.location.hash === '' || window.location.hash === '#home') {
+        setCurrentView('home');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // First-visit safety awareness notice check (once per browser)
+  useEffect(() => {
+    try {
+      const dismissed = localStorage.getItem('alkhalil_safety_notice_dismissed');
+      if (!dismissed) {
+        const timer = setTimeout(() => setShowFirstVisitNotice(true), 1500);
+        return () => clearTimeout(timer);
+      }
+    } catch {}
+  }, []);
+
+  const dismissFirstVisitNotice = () => {
+    setShowFirstVisitNotice(false);
+    try {
+      localStorage.setItem('alkhalil_safety_notice_dismissed', 'true');
+    } catch {}
+  };
+
   const scrollToSection = (id: string) => {
     setActiveSection(id);
     if (id === 'home') {
@@ -136,6 +180,28 @@ export function App() {
     if (elem) {
       elem.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleNavigate = (id: string) => {
+    if (id === 'cyber-safety') {
+      setCurrentView('cyber-safety');
+      window.location.hash = 'cyber-safety';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (currentView !== 'home') {
+      setCurrentView('home');
+      if (window.location.hash === '#cyber-safety') {
+        window.history.pushState(null, '', ' ');
+      }
+      setTimeout(() => {
+        scrollToSection(id);
+      }, 100);
+      return;
+    }
+
+    scrollToSection(id);
   };
 
   const scrollToTrackWithToken = (token: string) => {
@@ -163,8 +229,8 @@ export function App() {
       {/* 1. Official Header & Navigation */}
       <Navbar
         siteInfo={siteInfo}
-        activeSection={activeSection}
-        onNavigate={scrollToSection}
+        activeSection={currentView === 'cyber-safety' ? 'cyber-safety' : activeSection}
+        onNavigate={handleNavigate}
         onOpenAdmin={() => setShowAdminModal(true)}
       />
 
@@ -172,75 +238,132 @@ export function App() {
       <FlashNewsTicker
         news={news}
         onNewsClick={(link) => {
-          if (link) scrollToSection(link.replace('#', ''));
+          if (link) handleNavigate(link.replace('#', ''));
         }}
       />
 
-      {/* 3. Dynamic Hero Highlights Slider */}
-      <div id="home">
-        <HeroSlider banners={banners} onNavigate={scrollToSection} />
-      </div>
+      {currentView === 'cyber-safety' ? (
+        <CyberSafetyPage
+          siteInfo={siteInfo}
+          onBack={() => {
+            setCurrentView('home');
+            window.location.hash = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onNavigateSection={handleNavigate}
+          onOpenAdmin={() => setShowAdminModal(true)}
+        />
+      ) : (
+        <>
+          {/* 3. Dynamic Hero Highlights Slider */}
+          <div id="home">
+            <HeroSlider banners={banners} onNavigate={handleNavigate} />
+          </div>
 
-      {/* 3.5. Digital Notice Board / Flash Alerts Section */}
-      <NoticeBoard
-        notices={notices}
-        onActionClick={scrollToSection}
-      />
+          {/* 3.2. Homepage Cyber Fraud Safety Awareness Alert Card/Banner */}
+          {siteInfo.showCyberSafetyBanner !== false && (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 mb-6 relative z-20">
+              <div className="bg-gradient-to-r from-amber-950/80 via-slate-900 to-indigo-950/80 border border-amber-500/40 rounded-2xl p-4 sm:p-5 shadow-xl backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center shrink-0">
+                    <ShieldAlert className="w-5 h-5 animate-pulse" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-black text-amber-400 text-sm tracking-wide flex items-center gap-1.5">
+                        🛡️ साइबर फ्रॉड से सावधान रहें
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                        जनहित में जारी
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300 mt-1 leading-relaxed font-medium">
+                      {siteInfo.safetyNoticeText ||
+                        'OTP, UPI PIN, ATM PIN, Banking Password, Card PIN या CVV का गलत इस्तेमाल करके धोखाधड़ी की जा सकती है।'}
+                    </p>
+                  </div>
+                </div>
 
-      {/* 4. Key Highlighted Services */}
-      <ImportantServices
-        services={services}
-        siteInfo={siteInfo}
-        onSelectService={(s) => setSelectedServiceModal(s)}
-        onNavigate={scrollToSection}
-      />
+                <div className="flex items-center gap-3 shrink-0 self-end md:self-auto">
+                  <button
+                    onClick={() => {
+                      setCurrentView('cyber-safety');
+                      window.location.hash = 'cyber-safety';
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-amber-600/20 transition-all cursor-pointer hover:scale-105 active:scale-95"
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>Cyber Safety Tips देखें</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
-      {/* 4.5. Official AI-Powered Suite (Voice Converter, Search Assistant, Image-to-Video, Transcription) */}
-      <AiToolsSection siteInfo={siteInfo} />
+          {/* 3.5. Digital Notice Board / Flash Alerts Section */}
+          <NoticeBoard
+            notices={notices}
+            onActionClick={handleNavigate}
+          />
 
-      {/* 5. Complete Services Explorer (Category Tabs + Search + Details Modal) */}
-      <ServicesExplorer
-        services={services}
-        siteInfo={siteInfo}
-        selectedServiceModal={selectedServiceModal}
-        onSelectServiceModal={setSelectedServiceModal}
-      />
+          {/* 4. Key Highlighted Services */}
+          <ImportantServices
+            services={services}
+            siteInfo={siteInfo}
+            onSelectService={(s) => setSelectedServiceModal(s)}
+            onNavigate={handleNavigate}
+          />
 
-      {/* 6. Official Rate List & Price Chart */}
-      <RateListSection
-        rates={rates}
-        siteInfo={siteInfo}
-        onNavigate={scrollToSection}
-      />
+          {/* 4.5. Official AI-Powered Suite (Voice Converter, Search Assistant, Image-to-Video, Transcription) */}
+          <AiToolsSection siteInfo={siteInfo} />
 
-      {/* 6.5. Customer Testimonials & Star Ratings Section */}
-      <TestimonialsSection
-        testimonials={testimonials}
-        onReviewSubmitted={loadData}
-      />
+          {/* 5. Complete Services Explorer (Category Tabs + Search + Details Modal) */}
+          <ServicesExplorer
+            services={services}
+            siteInfo={siteInfo}
+            selectedServiceModal={selectedServiceModal}
+            onSelectServiceModal={setSelectedServiceModal}
+          />
 
-      {/* 7. Official Certificates & Authorizations Showcase */}
-      <CertificatesSection siteInfo={siteInfo} />
+          {/* 6. Official Rate List & Price Chart */}
+          <RateListSection
+            rates={rates}
+            siteInfo={siteInfo}
+            onNavigate={handleNavigate}
+          />
 
-      {/* 8. Live Customer Work Tracking System */}
-      <WorkTrackerSection siteInfo={siteInfo} />
+          {/* 6.5. Customer Testimonials & Star Ratings Section */}
+          <TestimonialsSection
+            testimonials={testimonials}
+            onReviewSubmitted={loadData}
+          />
 
-      {/* 9. Send Documents Online (with Instant Token Generation) */}
-      <DocumentUploadSection
-        siteInfo={siteInfo}
-        onNavigateToTrack={scrollToTrackWithToken}
-      />
+          {/* 7. Official Certificates & Authorizations Showcase */}
+          <CertificatesSection siteInfo={siteInfo} />
 
-      {/* 10. About AL KHALIL CYBER CENTRE */}
-      <AboutSection siteInfo={siteInfo} />
+          {/* 8. Live Customer Work Tracking System */}
+          <WorkTrackerSection siteInfo={siteInfo} />
 
-      {/* 11. Official Contact Desk & Google Maps */}
-      <ContactSection siteInfo={siteInfo} />
+          {/* 9. Send Documents Online (with Instant Token Generation) */}
+          <DocumentUploadSection
+            siteInfo={siteInfo}
+            onNavigateToTrack={scrollToTrackWithToken}
+          />
+
+          {/* 10. About AL KHALIL CYBER CENTRE */}
+          <AboutSection siteInfo={siteInfo} />
+
+          {/* 11. Official Contact Desk & Google Maps */}
+          <ContactSection siteInfo={siteInfo} />
+        </>
+      )}
 
       {/* 12. Official Footer & Admin Link */}
       <Footer
         siteInfo={siteInfo}
-        onNavigate={scrollToSection}
+        onNavigate={handleNavigate}
         onOpenAdmin={() => setShowAdminModal(true)}
       />
 
@@ -286,6 +409,53 @@ export function App() {
           FLOATING AI CHATBOT & 24/7 SMART ASSISTANT WIDGET
       ========================================================================= */}
       <ChatAssistant />
+
+      {/* =========================================================================
+          FIRST-VISIT DISMISSIBLE SAFETY NOTICE
+      ========================================================================= */}
+      {showFirstVisitNotice && (
+        <div className="fixed bottom-24 right-4 sm:right-6 max-w-sm sm:max-w-md bg-slate-900/95 border border-amber-500/40 rounded-2xl p-4 shadow-2xl backdrop-blur-md z-40 animate-in slide-in-from-bottom-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-2.5">
+              <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-xs font-black text-white flex items-center gap-1.5">
+                  🛡️ आपकी सुरक्षा हमारी प्राथमिकता है
+                </h4>
+                <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
+                  OTP केवल संबंधित सेवा और आपकी जानकारी/सहमति से ही उपयोग करें। UPI PIN, ATM PIN, CVV और Banking Password किसी के साथ साझा न करें।
+                </p>
+                <div className="flex items-center gap-2 mt-3">
+                  <button
+                    onClick={() => {
+                      dismissFirstVisitNotice();
+                      setCurrentView('cyber-safety');
+                      window.location.hash = 'cyber-safety';
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-[11px] uppercase tracking-wider transition-colors cursor-pointer"
+                  >
+                    Safety Tips देखें
+                  </button>
+                  <button
+                    onClick={dismissFirstVisitNotice}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-[11px] transition-colors cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={dismissFirstVisitNotice}
+              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              aria-label="Dismiss notice"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* =========================================================================
           ADMIN PANEL MODAL OVERLAY (PIN AUTHENTICATED)

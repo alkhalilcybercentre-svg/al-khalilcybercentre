@@ -40,6 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'Certificates', id: 'certificates' },
     { label: 'Track Work', id: 'track' },
     { label: 'Send Documents', id: 'upload-docs' },
+    { label: 'Cyber Safety', id: 'cyber-safety' },
     { label: 'About Us', id: 'about' },
     { label: 'Contact', id: 'contact' },
   ];

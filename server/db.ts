@@ -54,6 +54,14 @@ export interface SiteInfo {
   showDocUpload?: boolean;
   showAbout?: boolean;
   showContact?: boolean;
+
+  // Software & Management Portal (Admin-Only Config)
+  managementSoftwareUrl?: string;
+
+  // Cyber Safety & Fraud Awareness (Admin-Configurable)
+  otpVerificationPhone?: string;
+  safetyNoticeText?: string;
+  showCyberSafetyBanner?: boolean;
 }
 
 export interface NoticeItem {

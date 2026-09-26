@@ -67,6 +67,7 @@ export const Footer: React.FC<FooterProps> = ({ siteInfo, onNavigate, onOpenAdmi
                 { label: 'Certificates & License', id: 'certificates' },
                 { label: 'Track Work Online', id: 'track' },
                 { label: 'Send Documents', id: 'upload-docs' },
+                { label: 'Cyber Safety & Fraud Advisory', id: 'cyber-safety' },
                 { label: 'About Centre', id: 'about' },
                 { label: 'Contact & Location', id: 'contact' }
               ].map((link) => (

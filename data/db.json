@@ -5,9 +5,9 @@
     "phone": "9259837361",
     "whatsapp": "9259837361",
     "email": "alkhalilcybercentre@gmail.com",
-    "address": "Near Main Bus Stand, Station Road, AL KHALIL CYBER CENTRE",
+    "address": "Dhokpuri Tanda Bazar Road Kallu Haji Ke Madershe Ke Pas Rampur Uttar Pradesh ",
     "cityState": "Uttar Pradesh, India",
-    "pincode": "243001",
+    "pincode": "244924",
     "openingHours": "Mon - Sat: 8:00 AM - 9:00 PM | Sunday: 9:00 AM - 5:00 PM",
     "googleMapsUrl": "https://maps.google.com/?q=Al+Khalil+Cyber+Centre",
     "websiteUrl": "https://alkhalilcybercentre.com",
@@ -35,13 +35,18 @@
     "showDocUpload": true,
     "showAbout": true,
     "showContact": true,
-    "maintenanceMode": false
+    "maintenanceMode": false,
+    "logoUrl": "/uploads/branding/brand-1790420600442-2qp0d6.jpeg",
+    "faviconUrl": "/uploads/branding/brand-1790420643011-acm3zk.jpeg",
+    "managementSoftwareUrl": "https://smartdesk-al-khalil-cyber-centre-desk.ai.studio",
+    "otpVerificationPhone": "9259837361",
+    "safetyNoticeText": "OTP, UPI PIN, ATM PIN, Banking Password, Card PIN या CVV का गलत इस्तेमाल करके धोखाधड़ी की जा सकती है।",
+    "showCyberSafetyBanner": true
   },
   "adminAuth": {
     "pinHash": "$2b$10$BsmID82b.YS/JoNi6TKSU.mpDqEwSKqjclGIhH9XFQJCuAXb3K73u",
     "updatedAt": "2026-09-19T14:46:11.858Z",
-    "failedAttempts": 0,
-    "biometricEnabled": false
+    "failedAttempts": 0
   },
   "certificates": [
     {

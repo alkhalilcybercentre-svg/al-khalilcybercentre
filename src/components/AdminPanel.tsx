@@ -60,7 +60,8 @@ import {
   FileSpreadsheet,
   Fingerprint,
   Radio,
-  Laptop
+  Laptop,
+  Monitor
 } from 'lucide-react';
 import { AdminChatbotTab } from './admin/AdminChatbotTab';
 import {
@@ -157,6 +158,7 @@ interface AdminPanelProps {
 
 type AdminTab =
   | 'dashboard'
+  | 'software'
   | 'notices'
   | 'testimonials'
   | 'chatbot'
@@ -197,6 +199,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [jobs, setJobs] = useState<WorkJob[]>([]);
   const [documents, setDocuments] = useState<UploadedDocumentRecord[]>([]);
   const [businessSettings, setBusinessSettings] = useState<SiteInfo>(siteInfo);
+
+  // Software & Online Services state (Admin-Only)
+  const [softwareUrl, setSoftwareUrl] = useState<string>(
+    siteInfo.managementSoftwareUrl || 'https://smartdesk-al-khalil-cyber-centre-desk.ai.studio'
+  );
+  const [softwareUrlError, setSoftwareUrlError] = useState<string | null>(null);
+  const [savingSoftwareUrl, setSavingSoftwareUrl] = useState<boolean>(false);
 
   // General loading/error
   const [loading, setLoading] = useState(false);
@@ -370,6 +379,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       if (docsData?.length) setDocuments(docsData);
       if (settingsData) {
         setBusinessSettings(settingsData);
+        if (settingsData.managementSoftwareUrl) {
+          setSoftwareUrl(settingsData.managementSoftwareUrl);
+        }
       }
       fetchRegisteredPasskeys().then(res => setRegisteredPasskeys(res.passkeys)).catch(() => {});
 
@@ -598,6 +610,37 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   };
 
   // Comprehensive Settings Save Handler
+  const handleSaveSoftwareUrl = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setSoftwareUrlError(null);
+    const clean = softwareUrl.trim();
+    if (!clean) {
+      setSoftwareUrlError('Please enter a valid URL.');
+      return;
+    }
+    try {
+      const parsed = new URL(clean);
+      if (parsed.protocol !== 'https:') {
+        setSoftwareUrlError('URL must use secure HTTPS protocol (e.g. https://...).');
+        return;
+      }
+    } catch {
+      setSoftwareUrlError('Invalid URL format. Please enter a valid HTTPS web address.');
+      return;
+    }
+
+    setSavingSoftwareUrl(true);
+    try {
+      await updateAdminSiteInfo({ managementSoftwareUrl: clean });
+      setBusinessSettings(prev => ({ ...prev, managementSoftwareUrl: clean }));
+      showSuccess('Management Software URL successfully updated and saved!');
+    } catch (err: any) {
+      setSoftwareUrlError(err.message || 'Failed to update software URL.');
+    } finally {
+      setSavingSoftwareUrl(false);
+    }
+  };
+
   const handleSaveAllSettings = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setLoading(true);
@@ -1332,6 +1375,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
           {[
             { id: 'dashboard', label: 'Dashboard Overview', icon: LayoutDashboard },
+            { id: 'software', label: 'Software & Online Services', icon: Monitor },
             { id: 'notices', label: 'Notice Board / Alerts', icon: Bell, badge: notices.filter(n => n.active).length },
             { id: 'testimonials', label: 'Customer Reviews', icon: Star, badge: testimonials.filter(t => !t.isApproved).length },
             { id: 'chatbot', label: 'AI Chatbot & FAQs', icon: Bot },
@@ -1379,6 +1423,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         <div className="md:hidden w-full bg-slate-900 border-b border-slate-800 p-2 flex items-center gap-1.5 overflow-x-auto shrink-0">
           {[
             { id: 'dashboard', label: 'Dashboard' },
+            { id: 'software', label: 'Software' },
             { id: 'notices', label: 'Notices' },
             { id: 'testimonials', label: 'Reviews' },
             { id: 'chatbot', label: 'AI Bot & FAQs' },
@@ -1406,6 +1451,113 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
         {/* Main Work Area */}
         <main className="grow bg-slate-950 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          {/* =========================================================================
+              TAB: SOFTWARE & ONLINE SERVICES (ADMIN-ONLY SUITE)
+          ========================================================================= */}
+          {activeTab === 'software' && (
+            <div className="space-y-6 max-w-4xl mx-auto">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
+                    <Monitor className="w-6 h-6 text-sky-400" />
+                    <span>Software & Online Services</span>
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Admin-only management suite for internal business software and cloud portals.
+                  </p>
+                </div>
+
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20 self-start sm:self-auto">
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Admin Only Access</span>
+                </span>
+              </div>
+
+              {/* Main Software Card */}
+              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-slate-800 pb-6">
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-sky-400">
+                      Internal Software Entry #1
+                    </span>
+                    <h3 className="text-xl font-black text-white">
+                      Al-Khalil Cyber Centre Management Software
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed max-w-xl">
+                      Cloud desk application for token management, customer invoices, offline task tracking, and counter operations.
+                    </p>
+                  </div>
+
+                  <a
+                    href={softwareUrl || 'https://smartdesk-al-khalil-cyber-centre-desk.ai.studio'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-sky-600/30 transition-all cursor-pointer hover:scale-105 active:scale-95 shrink-0"
+                  >
+                    <span>Open Software</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+
+                {/* URL Edit Form */}
+                <form onSubmit={handleSaveSoftwareUrl} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                      Software Web Address (HTTPS URL) *
+                    </label>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                      <input
+                        type="url"
+                        required
+                        value={softwareUrl}
+                        onChange={(e) => {
+                          setSoftwareUrl(e.target.value);
+                          setSoftwareUrlError(null);
+                        }}
+                        placeholder="https://..."
+                        className="grow px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm font-mono focus:border-sky-500 focus:outline-none transition-colors"
+                      />
+                      <button
+                        type="submit"
+                        disabled={savingSoftwareUrl}
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50 shrink-0 shadow-md"
+                      >
+                        <Save className="w-4 h-4" />
+                        <span>{savingSoftwareUrl ? 'Saving...' : 'Save URL'}</span>
+                      </button>
+                    </div>
+
+                    {softwareUrlError && (
+                      <p className="text-xs text-rose-400 mt-2 flex items-center gap-1.5 font-medium">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <span>{softwareUrlError}</span>
+                      </p>
+                    )}
+
+                    <p className="text-[11px] text-slate-500 mt-2">
+                      Current target: <span className="font-mono text-slate-400 break-all">{softwareUrl}</span>
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+                    <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center gap-2.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span className="text-slate-300 font-medium">Strict HTTPS Protocol Enforced</span>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center gap-2.5">
+                      <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+                      <span className="text-slate-300 font-medium">Hidden from Public Website</span>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center gap-2.5">
+                      <ExternalLink className="w-4 h-4 text-sky-400 shrink-0" />
+                      <span className="text-slate-300 font-medium">Opens in Isolated New Tab</span>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
           {/* =========================================================================
               TAB: DASHBOARD OVERVIEW
           ========================================================================= */}
@@ -3266,6 +3418,23 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     </div>
                   </div>
 
+                  {/* Cyber Safety Verification Helpline setting */}
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                    <label className="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">
+                      Official OTP / Customer Verification Helpline Number
+                    </label>
+                    <input
+                      type="tel"
+                      value={businessSettings.otpVerificationPhone || ''}
+                      onChange={(e) => setBusinessSettings({ ...businessSettings, otpVerificationPhone: e.target.value })}
+                      placeholder={businessSettings.phone || '9259837361'}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm font-mono font-bold text-amber-400"
+                    />
+                    <span className="text-[11px] text-slate-400 block leading-relaxed">
+                      Displayed on the dedicated "Cyber Safety & Fraud Awareness" page for customers to verify genuine service calls. If left empty, primary phone (+91 {businessSettings.phone}) is used.
+                    </span>
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
@@ -3697,6 +3866,42 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             onChange={(e) => setBusinessSettings({ ...businessSettings, emergencyAlertText: e.target.value })}
                             placeholder="⚠️ UPP Constable 2026 Form Fill Up Started! Visit Centre Today."
                             className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-bold"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Cyber Safety Awareness Alert Banner Toggle */}
+                    <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                            <ShieldAlert className="w-4 h-4 text-amber-400" />
+                            <span>Cyber Safety & Fraud Awareness Alert Banner on Homepage</span>
+                          </h4>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            Displays a non-intrusive safety awareness card on the homepage with a button linking to the Cyber Safety page.
+                          </p>
+                        </div>
+                        <input
+                          type="checkbox"
+                          checked={businessSettings.showCyberSafetyBanner ?? true}
+                          onChange={(e) => setBusinessSettings({ ...businessSettings, showCyberSafetyBanner: e.target.checked })}
+                          className="w-5 h-5 accent-amber-500 rounded cursor-pointer"
+                        />
+                      </div>
+
+                      {businessSettings.showCyberSafetyBanner !== false && (
+                        <div>
+                          <label className="block text-xs font-bold text-slate-300 mb-1">
+                            Homepage Cyber Safety Alert Text
+                          </label>
+                          <input
+                            type="text"
+                            value={businessSettings.safetyNoticeText || ''}
+                            onChange={(e) => setBusinessSettings({ ...businessSettings, safetyNoticeText: e.target.value })}
+                            placeholder="OTP, UPI PIN, ATM PIN, Banking Password, Card PIN या CVV का गलत इस्तेमाल करके धोखाधड़ी की जा सकती है।"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
                           />
                         </div>
                       )}
