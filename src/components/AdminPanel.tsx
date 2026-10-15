@@ -61,8 +61,10 @@ import {
   Fingerprint,
   Radio,
   Laptop,
-  Monitor
+  Monitor,
+  Truck
 } from 'lucide-react';
+import { ServiceVisual } from './ServiceVisual';
 import { AdminChatbotTab } from './admin/AdminChatbotTab';
 import {
   discoverMantraDevice,
@@ -131,6 +133,7 @@ import {
   fetchAdminServices,
   saveAdminService,
   deleteAdminService,
+  uploadServiceImage,
   fetchAdminRates,
   saveAdminRate,
   deleteAdminRate,
@@ -147,7 +150,10 @@ import {
   fetchAdminSettings,
   updateAdminSiteInfo,
   uploadBrandingLogo,
-  getDocumentDownloadUrl
+  getDocumentDownloadUrl,
+  getDocumentViewUrl,
+  downloadAdminDocument,
+  fetchAdminDocumentBlob
 } from '../lib/api';
 
 interface AdminPanelProps {
@@ -277,6 +283,45 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [passkeySupported, setPasskeySupported] = useState(false);
   const [passkeyLoading, setPasskeyLoading] = useState(false);
   const [registeredPasskeys, setRegisteredPasskeys] = useState<Array<{ id: string; name: string; createdAt: string }>>([]);
+
+  // Customer Document Preview & Download states
+  const [previewDocState, setPreviewDocState] = useState<{
+    doc: UploadedDocumentRecord;
+    objectUrl: string;
+    mimeType: string;
+  } | null>(null);
+  const [docActionLoadingId, setDocActionLoadingId] = useState<string | null>(null);
+
+  const handlePreviewDocument = async (doc: UploadedDocumentRecord) => {
+    try {
+      setDocActionLoadingId(doc.id);
+      const { objectUrl, mimeType } = await fetchAdminDocumentBlob(doc.id);
+      setPreviewDocState({ doc, objectUrl, mimeType });
+    } catch (err: any) {
+      setActionError(err.message || 'Failed to preview document');
+    } finally {
+      setDocActionLoadingId(null);
+    }
+  };
+
+  const handleDownloadDocument = async (doc: UploadedDocumentRecord) => {
+    try {
+      setDocActionLoadingId(doc.id);
+      await downloadAdminDocument(doc.id, doc.originalName);
+      showSuccess(`Downloaded ${doc.originalName}`);
+    } catch (err: any) {
+      setActionError(err.message || 'Failed to download document');
+    } finally {
+      setDocActionLoadingId(null);
+    }
+  };
+
+  const handleCloseDocumentPreview = () => {
+    if (previewDocState?.objectUrl) {
+      window.URL.revokeObjectURL(previewDocState.objectUrl);
+    }
+    setPreviewDocState(null);
+  };
 
   // Probe Mantra MFS110 on local PC
   const checkMantraDevice = async () => {
@@ -2639,33 +2684,38 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     className="bg-slate-900 rounded-2xl border border-slate-800 p-5 flex flex-col justify-between space-y-4"
                   >
                     <div>
-                      <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[10px] font-bold text-sky-400 bg-sky-950 px-2 py-0.5 rounded border border-sky-900">
-                            {srv.category}
-                          </span>
-                          {srv.serviceCode && (
-                            <span className="text-[10px] font-mono font-bold text-slate-300 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
-                              {srv.serviceCode}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          {srv.chargeBreakdown && srv.chargeBreakdown.length > 0 && (
-                            <span className="text-[9px] font-bold text-emerald-300 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800">
-                              Breakdown ({srv.chargeBreakdown.length})
-                            </span>
-                          )}
-                          <span className="text-xs font-bold text-emerald-400">
-                            {srv.priceStartingFrom}
-                          </span>
+                      <div className="flex items-start gap-3 mb-2">
+                        <ServiceVisual service={srv} size="sm" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center justify-between gap-1.5 mb-1">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] font-bold text-sky-400 bg-sky-950 px-2 py-0.5 rounded border border-sky-900">
+                                {srv.category}
+                              </span>
+                              {srv.serviceCode && (
+                                <span className="text-[10px] font-mono font-bold text-slate-300 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
+                                  {srv.serviceCode}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              {srv.chargeBreakdown && srv.chargeBreakdown.length > 0 && (
+                                <span className="text-[9px] font-bold text-emerald-300 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800">
+                                  Breakdown ({srv.chargeBreakdown.length})
+                                </span>
+                              )}
+                              <span className="text-xs font-bold text-emerald-400">
+                                {srv.priceStartingFrom}
+                              </span>
+                            </div>
+                          </div>
+                          <h4 className="text-sm font-bold text-white leading-snug">{srv.title}</h4>
                         </div>
                       </div>
 
-                      <h4 className="text-base font-bold text-white">{srv.title}</h4>
                       <p className="text-xs text-slate-400 mt-1 line-clamp-2">{srv.shortDescription}</p>
 
-                      <div className="mt-3 text-[11px] text-slate-500">
+                      <div className="mt-2 text-[11px] text-slate-500">
                         Duration: <strong className="text-slate-300">{srv.estimatedTime}</strong>
                       </div>
                     </div>
@@ -3016,17 +3066,34 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         )}
                       </div>
 
-                      <div className="flex items-center gap-3 self-end md:self-auto">
-                        {/* Download Document Link */}
-                        <a
-                          href={getDocumentDownloadUrl(doc.id)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md"
+                      <div className="flex items-center gap-2.5 self-end md:self-auto flex-wrap">
+                        {/* Preview Document Button */}
+                        <button
+                          type="button"
+                          disabled={docActionLoadingId === doc.id}
+                          onClick={() => handlePreviewDocument(doc)}
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
+                          title="Preview Document Securely"
+                        >
+                          {docActionLoadingId === doc.id ? (
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Eye className="w-3.5 h-3.5" />
+                          )}
+                          <span>Preview</span>
+                        </button>
+
+                        {/* Download Document Button */}
+                        <button
+                          type="button"
+                          disabled={docActionLoadingId === doc.id}
+                          onClick={() => handleDownloadDocument(doc)}
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md transition-all cursor-pointer disabled:opacity-50"
+                          title="Download Document to Local Disk"
                         >
                           <Download className="w-3.5 h-3.5" />
-                          <span>Download File</span>
-                        </a>
+                          <span>Download</span>
+                        </button>
 
                         {/* Status Switcher */}
                         <select
@@ -5155,7 +5222,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               }}
               className="space-y-4 text-xs"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                 <div>
                   <label className="block font-bold text-slate-300 mb-1">Category *</label>
                   <input
@@ -5164,6 +5231,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     value={serviceModal.category || ''}
                     onChange={(e) => setServiceModal({ ...serviceModal, category: e.target.value })}
                     placeholder="e.g. JAN SEVA / CSC SERVICES"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-300 mb-1">
+                    Subcategory <span className="text-slate-500 font-normal text-[10px]">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={serviceModal.subcategory || ''}
+                    onChange={(e) => setServiceModal({ ...serviceModal, subcategory: e.target.value })}
+                    placeholder="e.g. Identity / Government Scheme"
                     className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs"
                   />
                 </div>
@@ -5201,6 +5280,142 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   placeholder="e.g. Fresh New Passport – Normal"
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm"
                 />
+              </div>
+
+              {/* Visual Identity: Icon Selection & Optional Image Upload */}
+              <div className="p-3.5 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-200 text-xs">
+                    Professional Visual Identity (Icon / Logo)
+                  </span>
+                  <span className="text-[10px] text-slate-500">
+                    Each service supports standard icon or optional custom image upload
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+                  <div>
+                    <label className="block font-bold text-slate-400 mb-1 text-[11px]">
+                      Default Icon
+                    </label>
+                    <select
+                      value={serviceModal.icon || 'ShieldCheck'}
+                      onChange={(e) => setServiceModal({ ...serviceModal, icon: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-sky-500 focus:outline-hidden"
+                    >
+                      <option value="ShieldCheck">ShieldCheck (Aadhaar & Verification)</option>
+                      <option value="Aadhaar">Aadhaar (UIDAI)</option>
+                      <option value="Certificate">Certificate (e-District / Revenue)</option>
+                      <option value="Home">Home (Domicile / Niwas / Property)</option>
+                      <option value="Property">Property (Land / Registry / LAP)</option>
+                      <option value="Disability">Disability (UDID / Divyang)</option>
+                      <option value="Land">Land (Khatauni / Revenue)</option>
+                      <option value="Family">Family (Family Register)</option>
+                      <option value="Mobile">Mobile (Mobile Recharge)</option>
+                      <option value="TV">TV (DTH Recharge)</option>
+                      <option value="Electricity">Electricity (Power Bills)</option>
+                      <option value="Water">Water (Water Bills)</option>
+                      <option value="Vehicle">Vehicle (FASTag / Gas)</option>
+                      <option value="Loan">Loan (Personal / Home Loan)</option>
+                      <option value="Business">Business (Business Loan / MSME)</option>
+                      <option value="Marriage">Marriage (Marriage Registration)</option>
+                      <option value="Wedding Card">Wedding Card (Invitation Printing)</option>
+                      <option value="Printing">Printing (Flex / Visiting Cards)</option>
+                      <option value="Drone">Drone (Aerial Shoot)</option>
+                      <option value="Photo">Photo (Passport Photos & Lamination)</option>
+                      <option value="Truck">Truck (Aadhaar Pickup & Drop)</option>
+                      <option value="Fingerprint">Fingerprint (Biometric)</option>
+                      <option value="CreditCard">CreditCard (PAN Card / Finance)</option>
+                      <option value="HeartPulse">HeartPulse (Ayushman Bharat)</option>
+                      <option value="BookOpen">BookOpen (Passport / Documentation)</option>
+                      <option value="Vote">Vote (Voter ID Card)</option>
+                      <option value="Car">Car (Driving License & RTO)</option>
+                      <option value="ShoppingBag">ShoppingBag (Ration Card)</option>
+                      <option value="Landmark">Landmark (Banking & AEPS)</option>
+                      <option value="Users">Users (Pension Schemes)</option>
+                      <option value="Sprout">Sprout (PM Kisan & Agriculture)</option>
+                      <option value="Tractor">Tractor (KCC Loan)</option>
+                      <option value="UtensilsCrossed">UtensilsCrossed (FSSAI Food License)</option>
+                      <option value="Building2">Building2 (MSME & GST)</option>
+                      <option value="BadgeCheck">BadgeCheck (Police Verification)</option>
+                      <option value="Shield">Shield (Insurance)</option>
+                      <option value="Radio">Radio (Fastag)</option>
+                      <option value="GraduationCap">GraduationCap (Jobs & Scholarships)</option>
+                      <option value="HardHat">HardHat (e-Shram / Labour)</option>
+                      <option value="Train">Train (Railways)</option>
+                      <option value="Plane">Plane (Flight Tickets)</option>
+                      <option value="Bus">Bus (Bus Tickets)</option>
+                      <option value="Zap">Zap (Electricity & Bills)</option>
+                      <option value="Coins">Coins (Loans)</option>
+                      <option value="MailOpen">MailOpen (Wedding Cards)</option>
+                      <option value="Image">Image (Flex & Banners)</option>
+                      <option value="Briefcase">Briefcase (Visiting Cards)</option>
+                      <option value="Printer">Printer (Printing & Xerox)</option>
+                      <option value="IdCard">IdCard (PVC Smart Card)</option>
+                      <option value="Video">Video (Videography)</option>
+                      <option value="Camera">Camera (Photography & Drone)</option>
+                      <option value="UserCheck">UserCheck (Passport Photos)</option>
+                      <option value="ScanLine">ScanLine (Scanning & PDF)</option>
+                      <option value="Sliders">Sliders (Photo Resizing)</option>
+                      <option value="FileText">FileText (Resume / Bio-Data)</option>
+                      <option value="FileCheck">FileCheck (Certificates)</option>
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block font-bold text-slate-400 mb-1 text-[11px]">
+                      Optional Custom Image / Logo URL or Upload File
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={serviceModal.imageUrl || ''}
+                        onChange={(e) => setServiceModal({ ...serviceModal, imageUrl: e.target.value })}
+                        placeholder="https://... or upload custom image"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs placeholder:text-slate-600 focus:border-sky-500 focus:outline-hidden"
+                      />
+                      <label className="shrink-0 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-sky-300 rounded-xl cursor-pointer font-bold text-xs border border-slate-700">
+                        Upload Image
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              try {
+                                const url = await uploadServiceImage(e.target.files[0]);
+                                setServiceModal({ ...serviceModal, imageUrl: url });
+                                showSuccess('Service image uploaded successfully.');
+                              } catch (err: any) {
+                                setActionError(err.message || 'Image upload failed');
+                              }
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visual Preview */}
+                <div className="pt-1 flex items-center gap-3">
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Preview:</span>
+                  <div className="flex items-center gap-2">
+                    <ServiceVisual service={serviceModal as ServiceItem} size="md" />
+                    <span className="text-xs text-slate-300 font-medium">
+                      {serviceModal.imageUrl ? 'Custom Image Active' : `Standard Icon: ${serviceModal.icon || 'ShieldCheck'}`}
+                    </span>
+                    {serviceModal.imageUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setServiceModal({ ...serviceModal, imageUrl: '' })}
+                        className="text-[10px] text-rose-400 hover:underline ml-2 cursor-pointer"
+                      >
+                        Remove Image (Use Icon)
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -6324,6 +6539,112 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   </>
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          CUSTOMER DOCUMENT PREVIEW MODAL (SECURE INLINE STREAM)
+      ========================================================================= */}
+      {previewDocState && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-200">
+          <div
+            className="bg-slate-900 border border-slate-700 text-white rounded-3xl max-w-4xl w-full p-5 sm:p-6 shadow-2xl relative my-auto space-y-4 animate-in zoom-in-95 duration-150 flex flex-col max-h-[92vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 pb-3 border-b border-slate-800">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <span className="font-mono text-xs font-bold text-purple-400 bg-purple-950 px-2 py-0.5 rounded border border-purple-800">
+                    {previewDocState.doc.trackingCode}
+                  </span>
+                  <span className="text-[10px] uppercase font-black text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800">
+                    SECURE VAULT PREVIEW
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    {Math.round(previewDocState.doc.fileSize / 1024)} KB • {previewDocState.mimeType}
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-lg font-black text-white truncate" title={previewDocState.doc.originalName}>
+                  {previewDocState.doc.originalName}
+                </h3>
+                <p className="text-xs text-slate-300">
+                  Customer: <strong>{previewDocState.doc.customerName}</strong> ({previewDocState.doc.customerMobile}) • Service: <strong>{previewDocState.doc.serviceRequested}</strong>
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCloseDocumentPreview}
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+                aria-label="Close Preview"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Preview Body */}
+            <div className="flex-1 overflow-auto rounded-2xl bg-slate-950 border border-slate-800 p-2 sm:p-4 flex items-center justify-center min-h-[300px]">
+              {previewDocState.mimeType.startsWith('image/') ? (
+                <img
+                  src={previewDocState.objectUrl}
+                  alt={previewDocState.doc.originalName}
+                  className="max-h-[60vh] max-w-full object-contain mx-auto rounded-xl shadow-2xl"
+                />
+              ) : previewDocState.mimeType === 'application/pdf' ? (
+                <iframe
+                  src={previewDocState.objectUrl}
+                  title={previewDocState.doc.originalName}
+                  className="w-full h-[62vh] rounded-xl border border-slate-800 bg-slate-900"
+                />
+              ) : (
+                <div className="text-center py-12 px-4 space-y-3">
+                  <FileText className="w-12 h-12 text-slate-500 mx-auto" />
+                  <h4 className="text-sm font-bold text-white">Browser Preview Not Supported for this File Type</h4>
+                  <p className="text-xs text-slate-400 max-w-md mx-auto">
+                    This file ({previewDocState.mimeType}) cannot be directly previewed in the web browser. Please click the download button below to view it using your desktop application.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Note & Footer Actions */}
+            {previewDocState.doc.note && (
+              <div className="p-3 bg-amber-950/40 rounded-xl border border-amber-800/60 text-xs text-amber-200">
+                <strong>Customer Note:</strong> {previewDocState.doc.note}
+              </div>
+            )}
+
+            <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-800 flex-wrap">
+              <a
+                href={getDocumentViewUrl(previewDocState.doc.id)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-colors"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Open in New Tab</span>
+              </a>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCloseDocumentPreview}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDownloadDocument(previewDocState.doc)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md shadow-purple-950/40 transition-colors cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download File</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

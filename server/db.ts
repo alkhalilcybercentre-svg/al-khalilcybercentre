@@ -147,6 +147,8 @@ export interface ServiceItem {
   id: string;
   serviceCode?: string;
   category: string;
+  subcategory?: string;
+  imageUrl?: string;
   title: string;
   shortDescription: string;
   fullDescription: string;
@@ -264,6 +266,29 @@ export interface AdminAuthData {
   passkeys?: PasskeyCredential[];
 }
 
+export type PickupStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
+export type PickupPriority = 'HIGH' | 'NORMAL';
+
+export interface HomePickupRequest {
+  id: string;
+  requestId: string;
+  customerName: string;
+  mobile: string;
+  address: string;
+  villageArea: string;
+  requiredService: string;
+  preferredDate?: string;
+  preferredTime?: string;
+  seniorCitizen: boolean;
+  specialRequirement?: string;
+  status: PickupStatus;
+  priority: PickupPriority;
+  aiVoiceAudioUrl?: string;
+  aiVoiceText?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface DatabaseSchema {
   siteInfo: SiteInfo;
   adminAuth: AdminAuthData;
@@ -279,6 +304,7 @@ export interface DatabaseSchema {
   contactMessages: ContactMessage[];
   faqs: BotFAQItem[];
   chatbotConfig: ChatbotConfig;
+  homePickupRequests?: HomePickupRequest[];
 }
 
 export const DATA_DIR = path.join(process.cwd(), 'data');
@@ -892,6 +918,233 @@ const initialDatabase: DatabaseSchema = {
       isPopular: false,
       active: true,
       order: 20
+    },
+    {
+      id: 'srv-21',
+      serviceCode: 'HOME-PICKUP-001',
+      category: 'JAN SEVA / CSC SERVICE',
+      subcategory: 'Home Assistance Services',
+      title: 'Home Pickup & Drop Service',
+      imageUrl: '/src/assets/images/home_pickup_service_1790884351690.jpg',
+      shortDescription: 'घर से Pickup, Al Khalil Cyber Centre पर आवश्यक सेवा और काम पूरा होने के बाद घर वापस Drop की सुविधा।',
+      fullDescription: 'जो ग्राहक, विशेषकर बुजुर्ग, महिलाएं या किसी कारण से हमारे सेंटर तक आने में असमर्थ हैं, उनके लिए Al Khalil Cyber Centre की Home Pickup & Drop Service उपलब्ध है। हमारी टीम आवश्यकता और उपलब्धता के अनुसार ग्राहक को उनके घर से सुरक्षित रूप से Al Khalil Cyber Centre तक लाने में सहायता करेगी। ग्राहक का आवश्यक डिजिटल/सरकारी कार्य जैसे Aadhaar Biometric Update, Aadhaar Correction, Digital Services, Document Services आदि कराया जाएगा और सेवा पूरी होने के बाद ग्राहक को घर वापस छोड़ने में सहायता की जाएगी। SPECIAL OFFER: Senior Citizens के लिए Home Pickup & Drop Service पूरी तरह FREE है।',
+      requiredDocuments: ['Customer Name & Mobile Number', 'Full Address & Village/Area', 'Required Service Details'],
+      estimatedTime: 'As per selected service and pickup availability',
+      priceStartingFrom: 'FREE for Senior Citizens',
+      icon: 'Truck',
+      isPopular: true,
+      active: true,
+      order: 21
+    },
+    {
+      id: 'srv-22',
+      serviceCode: 'PASS-001',
+      category: 'PASSPORT & TRAVEL',
+      title: 'Passport Online Application & Appointment Booking',
+      shortDescription: 'Fresh normal/tatkal passport application, appointment booking at PSK/POPSK, document verification check.',
+      fullDescription: 'End-to-end guidance for fresh passport issuance, passport re-issue/renewal, police clearance certificate (PCC), Annexure preparation, and appointment slot booking at Bareilly/Moradabad PSK/POPSK.',
+      requiredDocuments: ['Aadhaar Card with full DOB', '10th Marksheet / Birth Certificate', 'PAN Card & Bank Passbook', 'Address Proof'],
+      estimatedTime: '1 - 2 Days',
+      priceStartingFrom: '₹200',
+      icon: 'BookOpen',
+      isPopular: true,
+      active: true,
+      order: 22
+    },
+    {
+      id: 'srv-23',
+      serviceCode: 'VOTE-001',
+      category: 'JAN SEVA / CSC SERVICES',
+      title: 'Voter ID Card Online Services (ECI / NVSP)',
+      shortDescription: 'New voter registration (Form 6), address/name correction (Form 8), and e-EPIC digital voter card download.',
+      fullDescription: 'Authorized Election Commission of India (ECI) voter portal services. Apply for a new Voter ID card, link Aadhaar with Voter ID (Form 6B), correct name/photo/constituency, and instant laminated PVC Voter card printing.',
+      requiredDocuments: ['Aadhaar Card', 'Passport Size Photo', 'Age Proof / Marksheet', 'Family Member Voter ID (for reference)'],
+      estimatedTime: '15 - 30 Minutes',
+      priceStartingFrom: '₹50',
+      icon: 'Vote',
+      isPopular: false,
+      active: true,
+      order: 23
+    },
+    {
+      id: 'srv-24',
+      serviceCode: 'DL-001',
+      category: 'TRANSPORT & RTO SERVICES',
+      title: 'Driving License & RTO Online Services',
+      shortDescription: 'Learner license application, permanent DL slot booking, DL renewal, duplicate DL, address change & RC online services.',
+      fullDescription: 'Parivahan Sarathi RTO portal assistance. Online Learning License test preparation and slot booking, permanent driving license test appointment, commercial heavy vehicle license renewal, and vehicle registration certificate (RC) transfer guidance.',
+      requiredDocuments: ['Aadhaar Card', 'Blood Group Report', '10th Marksheet / Age Proof', 'Passport Photo & Signature'],
+      estimatedTime: '30 - 45 Minutes',
+      priceStartingFrom: '₹150',
+      icon: 'Car',
+      isPopular: true,
+      active: true,
+      order: 24
+    },
+    {
+      id: 'srv-25',
+      serviceCode: 'RC-001',
+      category: 'JAN SEVA / CSC SERVICES',
+      title: 'Ration Card Online Services & NFSA e-KYC',
+      shortDescription: 'New ration card application, family member name addition/deletion, FPS dealer change, and mandatory biometric e-KYC.',
+      fullDescription: 'Complete assistance on UP FCS portal. Apply for fresh Antyodaya or Patra Grihasti ration card, add newborn child or newlywed daughter-in-law, correct spelling mistakes, and check monthly grain distribution eligibility.',
+      requiredDocuments: ['Aadhaar Card of all family members', 'Income Certificate', 'Bank Passbook (Head of Family - Female)', 'Electricity Bill / Residence Proof'],
+      estimatedTime: '20 - 40 Minutes',
+      priceStartingFrom: '₹60',
+      icon: 'ShoppingBag',
+      isPopular: false,
+      active: true,
+      order: 25
+    },
+    {
+      id: 'srv-26',
+      serviceCode: 'BANK-001',
+      category: 'BANKING & FINANCIAL SERVICES',
+      title: 'AEPS Aadhaar Banking & Money Transfer (DMT)',
+      shortDescription: 'Instant cash withdrawal via Aadhaar thumb impression, domestic money transfer (DMT) to any bank, balance check & mini-statement.',
+      fullDescription: 'Authorized Banking Point & AEPS (Aadhaar Enabled Payment System). Withdraw cash instantly from SBI, PNB, Baroda, HDFC, ICICI, and all rural Grameen banks using your thumb impression. Send money to any Indian bank account within seconds via IMPS/NEFT.',
+      requiredDocuments: ['Aadhaar Number & Biometric Thumb Verification', 'Bank Account Details & IFSC (for Money Transfer)'],
+      estimatedTime: 'Instant (2 - 5 Minutes)',
+      priceStartingFrom: 'Free Withdrawal',
+      icon: 'Landmark',
+      isPopular: true,
+      active: true,
+      order: 26
+    },
+    {
+      id: 'srv-27',
+      serviceCode: 'PENS-001',
+      category: 'JAN SEVA / CSC SERVICES',
+      title: 'Old Age, Widow & Divyang Pension Schemes',
+      shortDescription: 'Online application for UP SSPY Vridha, Vidhwa, and Divyangjan pension, annual Aadhaar biometric Jeevan Pramaan e-KYC.',
+      fullDescription: 'Get monthly government pension assistance credited directly into bank accounts. We handle documentation, online application submission, Gram Panchayat / BDO tracking, and mandatory annual life certificate (Jeevan Pramaan Patra) biometric submission.',
+      requiredDocuments: ['Aadhaar Card', 'Bank Passbook with NPCI Aadhaar link', 'Income Certificate', 'Disability Certificate (for Divyang) / Husband Death Certificate (for Widow)'],
+      estimatedTime: '20 - 30 Minutes',
+      priceStartingFrom: '₹60',
+      icon: 'Users',
+      isPopular: false,
+      active: true,
+      order: 27
+    },
+    {
+      id: 'srv-28',
+      serviceCode: 'PMK-001',
+      category: 'LOAN & AGRICULTURE SERVICES',
+      title: 'PM Kisan Samman Nidhi e-KYC & Land Seeding',
+      shortDescription: 'Mandatory PM Kisan biometric e-KYC, new farmer registration, beneficiary status check, and Aadhaar bank NPCI seeding.',
+      fullDescription: 'Ensure uninterrupted receipt of ₹6,000 yearly PM Kisan installments. We provide instant biometric thumb e-KYC verification, land registry (Khatauni) seeding, Aadhaar correction, and unfreezing of stopped installment payments.',
+      requiredDocuments: ['Aadhaar Card', 'Land Khatauni / Khasra', 'Bank Passbook with Aadhaar NPCI seeding', 'PM Kisan Registration ID'],
+      estimatedTime: '10 - 15 Minutes',
+      priceStartingFrom: '₹30',
+      icon: 'Sprout',
+      isPopular: true,
+      active: true,
+      order: 28
+    },
+    {
+      id: 'srv-29',
+      serviceCode: 'FSSAI-001',
+      category: 'BUSINESS & COMPLIANCE',
+      title: 'FSSAI Food Business License & Registration',
+      shortDescription: 'FSSAI registration and state license filing for grocery stores, restaurants, dairy, street food vendors, and sweet shops.',
+      fullDescription: 'Mandatory legal compliance for anyone selling or manufacturing food items. We prepare FosCos portal applications, upload premise photos, business declarations, and deliver government-issued FSSAI certificate with official QR code.',
+      requiredDocuments: ['Aadhaar Card of Owner', 'Shop / Business Photo with Signboard', 'Electricity Bill of Premises', 'List of Food Products'],
+      estimatedTime: '2 - 4 Days',
+      priceStartingFrom: '₹500',
+      icon: 'UtensilsCrossed',
+      isPopular: false,
+      active: true,
+      order: 29
+    },
+    {
+      id: 'srv-30',
+      serviceCode: 'UDYAM-001',
+      category: 'BUSINESS & COMPLIANCE',
+      title: 'MSME Udyam & GST Registration Services',
+      shortDescription: 'Govt recognized Udyam certificate registration for small businesses, new GSTIN application, and monthly GST return guidance.',
+      fullDescription: 'Get your business recognized by the Ministry of MSME to unlock bank subsidies, collateral-free Mudra loans, and government tenders. We also assist with fresh GST registration and regular billing compliance.',
+      requiredDocuments: ['Aadhaar & PAN Card of Business Owner', 'Business Address Proof & Bank Account Details', 'Category / Nature of Business Activity'],
+      estimatedTime: 'Same Day / 24 Hours',
+      priceStartingFrom: '₹250',
+      icon: 'Building2',
+      isPopular: false,
+      active: true,
+      order: 30
+    },
+    {
+      id: 'srv-31',
+      serviceCode: 'POL-001',
+      category: 'JAN SEVA / CSC SERVICES',
+      title: 'Police Character Certificate (Charitra Praman Patra)',
+      shortDescription: 'UP CCTNS online police clearance/character certificate filing for jobs, driving, armed security, and government tenders.',
+      fullDescription: 'Online filing of UP Police verification form, fee payment receipt generation, and tracking until Local Police Station / Thana verification is completed and the digital certificate with official stamp is issued.',
+      requiredDocuments: ['Aadhaar Card', 'Passport Size Photo', 'Village Pradhan / Ward Councilor Recommendation Letter (if required)'],
+      estimatedTime: '10 - 15 Days',
+      priceStartingFrom: '₹80',
+      icon: 'BadgeCheck',
+      isPopular: false,
+      active: true,
+      order: 31
+    },
+    {
+      id: 'srv-32',
+      serviceCode: 'INS-001',
+      category: 'BANKING & FINANCIAL SERVICES',
+      title: 'Motor Vehicle & Two-Wheeler Insurance',
+      shortDescription: 'Instant 5-minute bike, scooter, car, and commercial vehicle insurance issuance with comprehensive & 3rd-party coverage.',
+      fullDescription: 'Instant online insurance policy issuance across leading insurance companies (Digit, Tata AIG, HDFC ERGO, Bajaj Allianz, ICICI Lombard). Avoid traffic police challans with instant PDF policy printout.',
+      requiredDocuments: ['Vehicle Registration Certificate (RC)', 'Previous Insurance Policy (if available)'],
+      estimatedTime: '5 - 10 Minutes',
+      priceStartingFrom: 'Instant Policy',
+      icon: 'Shield',
+      isPopular: false,
+      active: true,
+      order: 32
+    },
+    {
+      id: 'srv-33',
+      serviceCode: 'FAST-001',
+      category: 'TRANSPORT & RTO SERVICES',
+      title: 'NHAI Fastag Issuance, KYC & Recharge',
+      shortDescription: 'Instant RFID Fastag activation for cars, trucks, and commercial vehicles with instant bank balance top-up and KYC update.',
+      fullDescription: 'Authorized Fastag issuance point. Get bank-issued RFID tag pasted directly onto your vehicle windshield. Includes instant wallet recharge, vehicle blacklisting resolution, and NPCI KYC update.',
+      requiredDocuments: ['Vehicle Registration Certificate (RC)', 'Aadhaar Card & Mobile Number of Vehicle Owner'],
+      estimatedTime: '10 Minutes',
+      priceStartingFrom: '₹150 + Balance',
+      icon: 'Radio',
+      isPopular: false,
+      active: true,
+      order: 33
+    },
+    {
+      id: 'srv-34',
+      serviceCode: 'SCHOL-001',
+      category: 'EDUCATION & ADMISSIONS',
+      title: 'Pre & Post Matric Scholarship Application (UP & NSP)',
+      shortDescription: 'Complete application submission for UP Dashmottar and National Scholarship Portal (NSP) with fee slip and income verification.',
+      fullDescription: 'Accurate online scholarship form filling for Class 9th, 10th, 11th, 12th, ITI, Polytechnic, B.A., B.Sc., B.Ed., and PG courses. Includes Aadhaar biometric e-KYC, marksheet upload, caste/income barcode verification, and final submission printout.',
+      requiredDocuments: ['Marksheet of Previous Year', 'Aadhaar Card', 'Caste & Income Certificate', 'College Fee Receipt & Bank Passbook'],
+      estimatedTime: '30 - 45 Minutes',
+      priceStartingFrom: '₹80',
+      icon: 'GraduationCap',
+      isPopular: true,
+      active: true,
+      order: 34
+    },
+    {
+      id: 'srv-35',
+      serviceCode: 'SHRAM-001',
+      category: 'JAN SEVA / CSC SERVICES',
+      title: 'e-Shram & UP Labour Card (BOCW Majdoor Card)',
+      shortDescription: 'National Database of Unorganized Workers (NDUW) e-Shram card generation and UP BOCW Shramik card benefit registration.',
+      fullDescription: 'Assisting construction workers, artisans, drivers, mechanics, farmers, and unorganized workers with e-Shram biometric enrollment and UP Labour Department welfare schemes (maternity aid, daughter marriage grant, accidental insurance).',
+      requiredDocuments: ['Aadhaar Card', 'Active Mobile linked with Aadhaar', 'Bank Account Passbook', 'Nominee Details'],
+      estimatedTime: '15 Minutes',
+      priceStartingFrom: '₹40',
+      icon: 'HardHat',
+      isPopular: false,
+      active: true,
+      order: 35
     }
   ],
   rates: [
@@ -1246,8 +1499,36 @@ class DatabaseManager {
           notices: Array.isArray(parsed.notices) && parsed.notices.length > 0 ? parsed.notices : initialDatabase.notices,
           testimonials: Array.isArray(parsed.testimonials) && parsed.testimonials.length > 0 ? parsed.testimonials : initialDatabase.testimonials,
           faqs: Array.isArray(parsed.faqs) && parsed.faqs.length > 0 ? parsed.faqs : initialDatabase.faqs,
-          chatbotConfig: parsed.chatbotConfig ? { ...initialDatabase.chatbotConfig, ...parsed.chatbotConfig } : initialDatabase.chatbotConfig
+          chatbotConfig: parsed.chatbotConfig ? { ...initialDatabase.chatbotConfig, ...parsed.chatbotConfig } : initialDatabase.chatbotConfig,
+          homePickupRequests: Array.isArray(parsed.homePickupRequests) ? parsed.homePickupRequests : []
         };
+
+        // Ensure Home Pickup & Drop Service entry is always present and up-to-date with proper code, title, and image
+        if (!this.data.services) {
+          this.data.services = [...initialDatabase.services];
+        }
+        const homePickupDefault = initialDatabase.services.find((s) => s.serviceCode === 'HOME-PICKUP-001')!;
+        const pickupIdx = this.data.services.findIndex(
+          (s) => s.serviceCode === 'HOME-PICKUP-001' || s.serviceCode === 'ADH-PICKUP' || s.title.toLowerCase().includes('pickup')
+        );
+
+        if (pickupIdx !== -1) {
+          this.data.services[pickupIdx] = {
+            ...this.data.services[pickupIdx],
+            serviceCode: 'HOME-PICKUP-001',
+            title: 'Home Pickup & Drop Service',
+            category: 'JAN SEVA / CSC SERVICE',
+            subcategory: 'Home Assistance Services',
+            imageUrl: '/src/assets/images/home_pickup_service_1790884351690.jpg',
+            priceStartingFrom: 'FREE for Senior Citizens',
+            shortDescription: 'घर से Pickup, Al Khalil Cyber Centre पर आवश्यक सेवा और काम पूरा होने के बाद घर वापस Drop की सुविधा।',
+            fullDescription: homePickupDefault.fullDescription,
+            isPopular: true,
+            active: true
+          };
+        } else {
+          this.data.services.push(homePickupDefault);
+        }
       } else {
         if (backupAuth && backupAuth.pinHash) {
           this.data.adminAuth = {
@@ -1289,6 +1570,10 @@ class DatabaseManager {
     } catch (e) {
       console.error('Error saving db.json or admin_pin.json', e);
     }
+  }
+
+  public reload(): void {
+    this.load();
   }
 
   // Getters
@@ -2411,6 +2696,135 @@ class DatabaseManager {
     };
   }
 
+  // ==========================================
+  // HOME PICKUP & DROP REQUESTS
+  // ==========================================
+  public getHomePickupRequests(): HomePickupRequest[] {
+    if (!this.data.homePickupRequests) {
+      this.data.homePickupRequests = [];
+    }
+    // High-priority (senior citizen) first, then newest first
+    return [...this.data.homePickupRequests].sort((a, b) => {
+      if (a.priority === 'HIGH' && b.priority !== 'HIGH') return -1;
+      if (a.priority !== 'HIGH' && b.priority === 'HIGH') return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }
+
+  public getHomePickupRequestById(id: string): HomePickupRequest | undefined {
+    return (this.data.homePickupRequests || []).find((r) => r.id === id || r.requestId === id);
+  }
+
+  public addHomePickupRequest(data: {
+    customerName: string;
+    mobile: string;
+    address: string;
+    villageArea: string;
+    requiredService: string;
+    preferredDate?: string;
+    preferredTime?: string;
+    seniorCitizen: boolean;
+    specialRequirement?: string;
+  }): HomePickupRequest {
+    if (!this.data.homePickupRequests) {
+      this.data.homePickupRequests = [];
+    }
+
+    const randomSuffix = Math.floor(10000 + Math.random() * 90000);
+    const requestId = `AK-PK-${randomSuffix}`;
+    const id = `req-${Date.now()}-${randomSuffix}`;
+    const priority: PickupPriority = data.seniorCitizen ? 'HIGH' : 'NORMAL';
+
+    const newReq: HomePickupRequest = {
+      id,
+      requestId,
+      customerName: data.customerName.trim(),
+      mobile: data.mobile.trim(),
+      address: data.address.trim(),
+      villageArea: data.villageArea.trim(),
+      requiredService: data.requiredService.trim(),
+      preferredDate: data.preferredDate ? data.preferredDate.trim() : undefined,
+      preferredTime: data.preferredTime ? data.preferredTime.trim() : undefined,
+      seniorCitizen: Boolean(data.seniorCitizen),
+      specialRequirement: data.specialRequirement ? data.specialRequirement.trim() : undefined,
+      status: 'PENDING',
+      priority,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    this.data.homePickupRequests.unshift(newReq);
+
+    // Also auto-sync as a trackable WorkJob so customer can check progress
+    try {
+      this.saveJob({
+        trackingCode: requestId,
+        customerName: newReq.customerName,
+        customerMobile: newReq.mobile,
+        serviceName: `Home Pickup: ${newReq.requiredService}`,
+        serviceCode: 'HOME-PICKUP-001',
+        status: 'Received',
+        statusNotes: `Home Pickup Request for ${newReq.villageArea}, ${newReq.address}. Senior Citizen: ${newReq.seniorCitizen ? 'YES (FREE)' : 'NO'}. Preferred: ${newReq.preferredTime || 'Anytime'}.`,
+        estimatedDelivery: newReq.preferredDate || 'As confirmed by centre',
+        priceTotal: newReq.seniorCitizen ? 'FREE' : 'As confirmed'
+      });
+    } catch (e) {
+      console.warn('Auto-sync to WorkJob notice:', e);
+    }
+
+    this.save();
+    return newReq;
+  }
+
+  public updateHomePickupRequestStatus(id: string, status: PickupStatus): HomePickupRequest | null {
+    if (!this.data.homePickupRequests) return null;
+    const item = this.data.homePickupRequests.find((r) => r.id === id || r.requestId === id);
+    if (!item) return null;
+
+    item.status = status;
+    item.updatedAt = new Date().toISOString();
+
+    // Sync status to work job if exists
+    try {
+      const job = (this.data.jobs || []).find((j) => j.trackingCode === item.requestId);
+      if (job) {
+        if (status === 'COMPLETED') job.status = 'Completed';
+        else if (status === 'CONFIRMED') job.status = 'Processing';
+        else if (status === 'CANCELLED') job.status = 'On Hold';
+        job.statusNotes = `Home Pickup status updated to ${status}.`;
+        job.updatedAt = new Date().toISOString();
+      }
+    } catch (e) {
+      console.warn('Sync status to job note:', e);
+    }
+
+    this.save();
+    return item;
+  }
+
+  public saveHomePickupVoiceAudio(id: string, audioUrl: string, text?: string): boolean {
+    if (!this.data.homePickupRequests) return false;
+    const item = this.data.homePickupRequests.find((r) => r.id === id || r.requestId === id);
+    if (!item) return false;
+
+    item.aiVoiceAudioUrl = audioUrl;
+    if (text) item.aiVoiceText = text;
+    item.updatedAt = new Date().toISOString();
+    this.save();
+    return true;
+  }
+
+  public deleteHomePickupRequest(id: string): boolean {
+    if (!this.data.homePickupRequests) return false;
+    const initialLen = this.data.homePickupRequests.length;
+    this.data.homePickupRequests = this.data.homePickupRequests.filter((r) => r.id !== id && r.requestId !== id);
+    if (this.data.homePickupRequests.length !== initialLen) {
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
   // Dashboard Stats
   public getStats() {
     const totalBanners = this.data.banners.length;
@@ -2441,6 +2855,12 @@ class DatabaseManager {
     const totalFaqs = faqs.length;
     const activeFaqs = faqs.filter((f) => f.active).length;
 
+    const homePickupRequests = this.data.homePickupRequests || [];
+    const totalPickupRequests = homePickupRequests.length;
+    const pendingPickupRequests = homePickupRequests.filter((r) => r.status === 'PENDING').length;
+    const confirmedPickupRequests = homePickupRequests.filter((r) => r.status === 'CONFIRMED').length;
+    const completedPickupRequests = homePickupRequests.filter((r) => r.status === 'COMPLETED').length;
+
     return {
       totalBanners,
       activeBanners,
@@ -2460,7 +2880,11 @@ class DatabaseManager {
       approvedTestimonials,
       averageRating,
       totalFaqs,
-      activeFaqs
+      activeFaqs,
+      totalPickupRequests,
+      pendingPickupRequests,
+      confirmedPickupRequests,
+      completedPickupRequests
     };
   }
 }

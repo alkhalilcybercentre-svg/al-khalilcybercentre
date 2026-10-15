@@ -1,19 +1,12 @@
 import React from 'react';
 import {
-  ShieldCheck,
-  CreditCard,
-  HeartPulse,
-  Printer,
-  MailOpen,
-  Camera,
-  FileCheck,
-  Zap,
   ArrowRight,
   Sparkles,
   PhoneCall,
   MessageCircle
 } from 'lucide-react';
 import { ServiceItem, SiteInfo } from '../types';
+import { ServiceVisual } from './ServiceVisual';
 
 interface ImportantServicesProps {
   services: ServiceItem[];
@@ -64,29 +57,22 @@ export const ImportantServices: React.FC<ImportantServicesProps> = ({
 
         {/* Highlight Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayList.map((service, idx) => {
-            const iconBgColors = [
-              'bg-blue-500/20 text-blue-400',
-              'bg-amber-500/20 text-amber-400',
-              'bg-purple-500/20 text-purple-400',
-              'bg-emerald-500/20 text-emerald-400',
-              'bg-indigo-500/20 text-indigo-400',
-              'bg-rose-500/20 text-rose-400'
-            ];
-            const colorClass = iconBgColors[idx % iconBgColors.length];
-
+          {displayList.map((service) => {
             return (
               <div
                 key={service.id}
-                className="group relative bg-slate-800 hover:bg-slate-800/90 rounded-3xl p-6 border border-slate-700 hover:border-indigo-500/80 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
+                className="group relative bg-slate-800 hover:bg-slate-800/90 rounded-3xl p-5 sm:p-6 border border-slate-700 hover:border-indigo-500/80 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
+                  {/* Dynamic Visual Header (Custom image or default category-specific Lucide icon) */}
                   <div className="flex items-start justify-between gap-3 mb-4">
-                    <div className={`w-12 h-12 rounded-2xl ${colorClass} flex items-center justify-center group-hover:scale-110 transition-all duration-300 font-black shadow-inner`}>
-                      <ShieldCheck className="w-6 h-6" />
-                    </div>
+                    <ServiceVisual
+                      service={service}
+                      size="md"
+                      className="shrink-0 transition-transform duration-300 group-hover:scale-105"
+                    />
                     {service.priceStartingFrom && (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-black uppercase tracking-wider bg-slate-900 text-emerald-400 border border-slate-700">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-black uppercase tracking-wider bg-slate-900 text-emerald-400 border border-slate-700 shadow-sm shrink-0">
                         {service.priceStartingFrom}
                       </span>
                     )}
@@ -96,7 +82,7 @@ export const ImportantServices: React.FC<ImportantServicesProps> = ({
                     {service.category}
                   </span>
 
-                  <h3 className="text-lg font-black text-white mt-1 mb-2 group-hover:text-indigo-400 transition-colors uppercase tracking-tight">
+                  <h3 className="text-base sm:text-lg font-black text-white mt-1 mb-2 group-hover:text-indigo-400 transition-colors uppercase tracking-tight">
                     {service.title}
                   </h3>
 

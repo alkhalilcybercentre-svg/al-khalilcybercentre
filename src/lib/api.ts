@@ -18,7 +18,9 @@ import {
   SearchAssistantResponse,
   TranscriptionResponse,
   ImageToVideoStartResponse,
-  ImageToVideoStatusResponse
+  ImageToVideoStatusResponse,
+  HomePickupRequest,
+  PickupStatus
 } from '../types';
 
 const ADMIN_TOKEN_KEY = 'alkhalil_admin_token';
@@ -609,6 +611,16 @@ export async function fetchAdminServices(): Promise<ServiceItem[]> {
   return data || [];
 }
 
+export async function uploadServiceImage(file: File): Promise<string> {
+  const fd = new FormData();
+  fd.append('image', file);
+  const json = await adminFetch<{ imageUrl: string }>('/api/admin/upload-service-image', {
+    method: 'POST',
+    body: fd
+  }, 'Failed to upload service image');
+  return json.imageUrl;
+}
+
 export async function saveAdminService(service: Partial<ServiceItem>): Promise<ServiceItem> {
   const isEdit = !!service.id;
   const url = isEdit ? `/api/admin/services/${service.id}` : '/api/admin/services';
@@ -689,10 +701,76 @@ export async function deleteAdminDocument(id: string): Promise<boolean> {
   return true;
 }
 
-export const getDocumentDownloadUrl = (docId: string): string => {
+export const getDocumentDownloadUrl = (docId: string, download: boolean = true): string => {
   const token = getAdminToken();
-  return `/api/admin/documents/${docId}/download?token=${token || ''}`;
+  return `/api/admin/documents/${docId}/download?token=${encodeURIComponent(token || '')}${download ? '&download=true' : ''}`;
 };
+
+export const getDocumentViewUrl = (docId: string): string => {
+  const token = getAdminToken();
+  return `/api/admin/documents/${docId}/view?token=${encodeURIComponent(token || '')}`;
+};
+
+export async function downloadAdminDocument(docId: string, originalName: string): Promise<void> {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error('Admin login required. Please login again.');
+  }
+
+  const res = await fetch(`/api/admin/documents/${docId}/download?download=true`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error('Admin session expired or unauthorized. Please login again.');
+    }
+    if (res.status === 404) {
+      throw new Error('Document file not found on secure server storage.');
+    }
+    throw new Error(`Failed to download document (${res.statusText})`);
+  }
+
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = originalName || `document-${docId}`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+}
+
+export async function fetchAdminDocumentBlob(docId: string): Promise<{ blob: Blob; mimeType: string; objectUrl: string }> {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error('Admin login required. Please login again.');
+  }
+
+  const res = await fetch(`/api/admin/documents/${docId}/view`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error('Admin session expired or unauthorized. Please login again.');
+    }
+    if (res.status === 404) {
+      throw new Error('Document file not found on secure server storage.');
+    }
+    throw new Error(`Failed to load document (${res.statusText})`);
+  }
+
+  const blob = await res.blob();
+  const mimeType = res.headers.get('content-type') || blob.type || 'application/octet-stream';
+  const objectUrl = window.URL.createObjectURL(blob);
+  return { blob, mimeType, objectUrl };
+}
 
 // Admin Contact Messages
 export async function fetchAdminMessages(): Promise<ContactMessage[]> {
@@ -964,5 +1042,85 @@ export async function downloadVideoFile(operationName: string): Promise<Blob> {
   }
   return await res.blob();
 }
+
+// ==========================================
+// HOME PICKUP & DROP REQUESTS API CLIENT
+// ==========================================
+
+export async function submitHomePickupRequest(data: {
+  customerName: string;
+  mobile: string;
+  address: string;
+  villageArea: string;
+  requiredService: string;
+  preferredDate?: string;
+  preferredTime?: string;
+  seniorCitizen: boolean;
+  specialRequirement?: string;
+}): Promise<{ success: boolean; message: string; requestId: string; data: HomePickupRequest }> {
+  const res = await fetch('/api/home-pickup-requests', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  const json = await res.json();
+  if (!res.ok || !json.success) {
+    throw new Error(json.error || 'Failed to submit home pickup request.');
+  }
+  return json;
+}
+
+export async function fetchAdminHomePickupRequests(): Promise<HomePickupRequest[]> {
+  const data = await adminFetch<HomePickupRequest[]>(
+    '/api/admin/home-pickup-requests',
+    {},
+    'Failed to fetch home pickup requests'
+  );
+  return data || [];
+}
+
+export async function updateAdminHomePickupRequestStatus(
+  id: string,
+  status: PickupStatus
+): Promise<HomePickupRequest> {
+  const data = await adminFetch<HomePickupRequest>(
+    `/api/admin/home-pickup-requests/${id}/status`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    },
+    'Failed to update pickup request status'
+  );
+  return data;
+}
+
+export async function deleteAdminHomePickupRequest(id: string): Promise<boolean> {
+  await adminFetch(
+    `/api/admin/home-pickup-requests/${id}`,
+    { method: 'DELETE' },
+    'Failed to delete pickup request'
+  );
+  return true;
+}
+
+export async function generateAdminHomePickupVoice(
+  id: string,
+  customText?: string,
+  voice?: string
+): Promise<{ text: string; audioUrl: string; audioBase64: string }> {
+  const data = await adminFetch<{ text: string; audioUrl: string; audioBase64: string }>(
+    `/api/admin/home-pickup-requests/${id}/generate-voice`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customText, voice })
+    },
+    'Failed to synthesize follow-up voice speech'
+  );
+  return data;
+}
+
 
 

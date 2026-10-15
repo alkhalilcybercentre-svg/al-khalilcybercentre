@@ -509,3 +509,53 @@ export async function fetchVideoBuffer(operationName: string): Promise<{ buffer:
     contentType: 'video/mp4',
   };
 }
+
+// -------------------------------------------------------------
+// 5. AI HINDI FOLLOW-UP SPEECH GENERATION (gemini-3.1-flash-tts-preview)
+// -------------------------------------------------------------
+export async function generateFollowUpSpeech(
+  speechText: string,
+  targetVoice: string = 'Kore'
+): Promise<{ audioBase64: string; mimeType: string }> {
+  const ai = getGeminiClient();
+
+  const validVoices = ['Kore', 'Puck', 'Charon', 'Fenrir', 'Zephyr'];
+  const voiceName = validVoices.includes(targetVoice) ? targetVoice : 'Kore';
+
+  const cleanText = speechText.trim();
+  if (!cleanText) {
+    throw new Error('Speech text cannot be empty.');
+  }
+
+  const ttsResponse = await ai.models.generateContent({
+    model: 'gemini-3.1-flash-tts-preview',
+    contents: [
+      {
+        parts: [
+          {
+            text: `Speak politely, clearly and warmly in authentic natural Hindi: ${cleanText}`,
+          },
+        ],
+      },
+    ],
+    config: {
+      responseModalities: [Modality.AUDIO],
+      speechConfig: {
+        voiceConfig: {
+          prebuiltVoiceConfig: { voiceName },
+        },
+      },
+    },
+  });
+
+  const generatedAudioBase64 = ttsResponse.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+  if (!generatedAudioBase64) {
+    throw new Error('Speech synthesis did not return audio data.');
+  }
+
+  return {
+    audioBase64: generatedAudioBase64,
+    mimeType: 'audio/mp3',
+  };
+}
+

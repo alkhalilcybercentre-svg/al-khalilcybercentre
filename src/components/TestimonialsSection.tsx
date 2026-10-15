@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Star, 
   MessageSquare, 
@@ -9,9 +10,16 @@ import {
   Send, 
   Sparkles, 
   X, 
-  ShieldCheck,
-  ThumbsUp,
-  Quote
+  ShieldCheck, 
+  ThumbsUp, 
+  Quote,
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+  LayoutGrid,
+  SlidersHorizontal,
+  RotateCcw
 } from 'lucide-react';
 import { TestimonialItem } from '../types';
 import { submitCustomerReview } from '../lib/api';
@@ -21,6 +29,66 @@ interface TestimonialsSectionProps {
   onReviewSubmitted?: () => void;
 }
 
+const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
+  {
+    id: 'test-default-1',
+    customerName: 'Mohammad Rizwan',
+    customerCity: 'Bareilly, UP',
+    rating: 5,
+    serviceAvail: 'Aadhaar Update & Instant PAN Card',
+    reviewText: 'Bahut hi fast aur transparent service hai! Mera PAN Card sirf 2 ghante me ban gaya aur Aadhaar address update bhi usi din verify ho gaya. Real-time tracking token system se mujhe live status pata chalta raha. Best Jan Seva Kendra in town.',
+    isApproved: true,
+    isFeatured: true,
+    responseFromAdmin: 'Thank you Rizwan ji! We always strive to provide swift and reliable digital public services.',
+    createdAt: new Date(Date.now() - 12 * 86400 * 1000).toISOString()
+  },
+  {
+    id: 'test-default-2',
+    customerName: 'Rajesh Kumar Sharma',
+    customerCity: 'Uttar Pradesh',
+    rating: 5,
+    serviceAvail: 'Wedding Cards Printing (500 Units)',
+    reviewText: 'Hamare parivaar ki shaadi ke cards ki quality bohot shaandar aayi. Offset color printing, golden foil embossing aur box finish sab top class thi. Delivery committed date par mil gayi. Market se bohot affordable rate hai.',
+    isApproved: true,
+    isFeatured: true,
+    responseFromAdmin: 'Congratulations on the family wedding! It was our pleasure serving you.',
+    createdAt: new Date(Date.now() - 8 * 86400 * 1000).toISOString()
+  },
+  {
+    id: 'test-default-3',
+    customerName: 'Farhan Qureshi',
+    customerCity: 'Rampur, UP',
+    rating: 5,
+    serviceAvail: '4K Wedding Photography & Drone Shoot',
+    reviewText: 'Al Khalil Cyber Centre ki media team ne hamare function me 4K cinematic video aur drone shoot kiya. Album design aur video editing bilkul Bollywood style ki tarah hai. 100% recommended!',
+    isApproved: true,
+    isFeatured: true,
+    createdAt: new Date(Date.now() - 5 * 86400 * 1000).toISOString()
+  },
+  {
+    id: 'test-default-4',
+    customerName: 'Pooja Verma',
+    customerCity: 'Uttar Pradesh',
+    rating: 5,
+    serviceAvail: 'UP Govt Job Online Application',
+    reviewText: 'Online form filling me koi bhi mistake nahi hoti. Photo, signature resizing aur online fee payment smoothly complete ho gaya. Document upload section se ghar baithe form bhejna bahut aasan hai.',
+    isApproved: true,
+    isFeatured: false,
+    createdAt: new Date(Date.now() - 3 * 86400 * 1000).toISOString()
+  },
+  {
+    id: 'test-default-5',
+    customerName: 'Imran Malik',
+    customerCity: 'Uttar Pradesh',
+    rating: 5,
+    serviceAvail: 'Ayushman Golden Card & PVC Smart Card',
+    reviewText: 'Poori family ka Ayushman Card biometric verification se 20 minute me ban gaya aur waterproof PVC smart card bhi print karke diya. Polite staff aur quick turnaround.',
+    isApproved: true,
+    isFeatured: false,
+    createdAt: new Date(Date.now() - 1 * 86400 * 1000).toISOString()
+  }
+];
+
 export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ 
   testimonials = [],
   onReviewSubmitted 
@@ -29,6 +97,14 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Carousel & View State
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [viewMode, setViewMode] = useState<'carousel' | 'grid'>('carousel');
+  const [timerProgress, setTimerProgress] = useState(0);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -42,7 +118,84 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
   const [hoverRating, setHoverRating] = useState<number | null>(null);
 
-  const approvedList = testimonials.filter(t => t.isApproved !== false);
+  // Determine items to display
+  const rawApprovedList = testimonials.filter(t => t.isApproved !== false);
+  const approvedList = rawApprovedList.length > 0 ? rawApprovedList : DEFAULT_TESTIMONIALS;
+
+  // Responsive calculation of visible cards per page
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setItemsPerPage(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerPage(2);
+      } else {
+        setItemsPerPage(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const maxIndex = Math.max(0, approvedList.length - itemsPerPage);
+
+  // Clamp current index if maxIndex changes on resize
+  useEffect(() => {
+    if (currentIndex > maxIndex) {
+      setCurrentIndex(maxIndex);
+    }
+  }, [maxIndex, currentIndex]);
+
+  // Navigation handlers
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    setTimerProgress(0);
+  }, [maxIndex]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    setTimerProgress(0);
+  }, [maxIndex]);
+
+  // Automatic horizontal rotation using framer-motion transitions
+  const AUTO_ROTATE_DELAY_MS = 5000;
+  const PROGRESS_TICK_MS = 50;
+
+  useEffect(() => {
+    if (!isAutoPlay || isHovered || maxIndex <= 0 || viewMode !== 'carousel') {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimerProgress((prev) => {
+        const next = prev + (PROGRESS_TICK_MS / AUTO_ROTATE_DELAY_MS) * 100;
+        if (next >= 100) {
+          nextSlide();
+          return 0;
+        }
+        return next;
+      });
+    }, PROGRESS_TICK_MS);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlay, isHovered, maxIndex, viewMode, nextSlide]);
+
+  // Reset timer on slide change
+  useEffect(() => {
+    setTimerProgress(0);
+  }, [currentIndex]);
+
+  // Touch and Drag swipe handling with framer-motion
+  const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const swipeThreshold = 50;
+    if (info.offset.x < -swipeThreshold || info.velocity.x < -300) {
+      nextSlide();
+    } else if (info.offset.x > swipeThreshold || info.velocity.x > 300) {
+      prevSlide();
+    }
+  };
 
   // Stats calculation
   const totalReviews = approvedList.length;
@@ -98,8 +251,90 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
     }
   };
 
+  // Shared card rendering function
+  const renderCard = (test: TestimonialItem) => (
+    <div
+      id={`testimonial-card-${test.id}`}
+      className="h-full relative rounded-2xl bg-slate-900/90 border border-slate-800/90 hover:border-amber-500/40 p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/5 backdrop-blur-md group"
+    >
+      {/* Top Quote Icon & Rating */}
+      <div>
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Star
+                key={star}
+                className={`w-4 h-4 ${
+                  star <= test.rating
+                    ? 'text-amber-400 fill-amber-400'
+                    : 'text-slate-700'
+                }`}
+              />
+            ))}
+          </div>
+
+          {test.isFeatured && (
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1 shadow-xs">
+              <Sparkles className="w-3 h-3 text-amber-400" />
+              Featured
+            </span>
+          )}
+        </div>
+
+        {/* Service Tag */}
+        <div className="inline-block px-2.5 py-1 rounded-lg bg-slate-800/90 text-cyan-300 text-xs font-semibold mb-3 border border-slate-700/60 shadow-xs">
+          {test.serviceAvail}
+        </div>
+
+        {/* Review Text */}
+        <div className="relative mb-5">
+          <Quote className="absolute -top-1 -left-2 w-7 h-7 text-slate-800/60 -z-0 opacity-60" />
+          <p className="relative z-10 text-slate-200 text-sm leading-relaxed italic line-clamp-4 group-hover:line-clamp-none transition-all">
+            "{test.reviewText}"
+          </p>
+        </div>
+
+        {/* Official Response from Center if present */}
+        {test.responseFromAdmin && (
+          <div className="mb-4 p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-xs shadow-inner">
+            <div className="flex items-center gap-1.5 text-cyan-400 font-bold mb-1">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Response from AL KHALIL CYBER CENTRE:
+            </div>
+            <p className="text-slate-300 text-[11px] leading-relaxed">
+              {test.responseFromAdmin}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Author Info */}
+      <div className="pt-4 border-t border-slate-800/90 flex items-center justify-between text-xs mt-auto">
+        <div className="flex items-center gap-2.5">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 via-orange-600 to-cyan-600 text-slate-950 font-black text-sm shadow-md flex items-center justify-center shrink-0">
+            {test.customerName.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <div className="font-extrabold text-white flex items-center gap-1.5">
+              <span>{test.customerName}</span>
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" title="Verified Customer" />
+            </div>
+            <span className="text-slate-400 text-[11px] flex items-center gap-1 mt-0.5">
+              <MapPin className="w-3 h-3 text-slate-500 shrink-0" />
+              <span>{test.customerCity || 'Uttar Pradesh'}</span>
+            </span>
+          </div>
+        </div>
+
+        <span className="text-slate-500 text-[11px] font-medium shrink-0">
+          {new Date(test.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+        </span>
+      </div>
+    </div>
+  );
+
   return (
-    <section id="testimonials" className="relative py-16 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-b border-slate-800/80">
+    <section id="testimonials" className="relative py-16 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-b border-slate-800/80 overflow-hidden">
       {/* Background radial glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/3 -right-24 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl"></div>
@@ -109,7 +344,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header and Rating Overview Box */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-8">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-10 gap-8">
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">
               <Sparkles className="w-3.5 h-3.5" />
@@ -155,90 +390,186 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
           </div>
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {approvedList.map((test) => (
-            <div
-              key={test.id}
-              id={`testimonial-card-${test.id}`}
-              className="relative rounded-2xl bg-slate-900/80 border border-slate-800/80 hover:border-slate-700/80 p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:shadow-slate-950/50 backdrop-blur-sm group"
-            >
-              {/* Top Quote Icon & Rating */}
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-4">
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`w-4 h-4 ${
-                          star <= test.rating
-                            ? 'text-amber-400 fill-amber-400'
-                            : 'text-slate-700'
-                        }`}
-                      />
-                    ))}
-                  </div>
+        {/* Carousel Control Toolbar: Auto-rotate status, Mode toggle, Prev/Next */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 px-1">
+          {/* Left: View Mode Toggle & Auto-play indicator */}
+          <div className="flex items-center gap-3">
+            <div className="bg-slate-900 border border-slate-800 p-1 rounded-xl flex items-center gap-1 shadow-inner">
+              <button
+                type="button"
+                onClick={() => setViewMode('carousel')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewMode === 'carousel'
+                    ? 'bg-amber-500 text-slate-950 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="Sliding Carousel View"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span>Carousel Slider</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-amber-500 text-slate-950 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="Grid View (All reviews)"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Grid View</span>
+              </button>
+            </div>
 
-                  {test.isFeatured && (
-                    <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" />
-                      Featured
-                    </span>
-                  )}
-                </div>
-
-                {/* Service Tag */}
-                <div className="inline-block px-2.5 py-1 rounded-md bg-slate-800/90 text-cyan-300 text-xs font-medium mb-3 border border-slate-700/50">
-                  {test.serviceAvail}
-                </div>
-
-                {/* Review Text */}
-                <div className="relative mb-6">
-                  <Quote className="absolute -top-1 -left-2 w-6 h-6 text-slate-800 -z-0 opacity-50" />
-                  <p className="relative z-10 text-slate-300 text-sm leading-relaxed italic">
-                    "{test.reviewText}"
-                  </p>
-                </div>
-
-                {/* Official Response from Center if present */}
-                {test.responseFromAdmin && (
-                  <div className="mb-4 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20 text-xs">
-                    <div className="flex items-center gap-1.5 text-cyan-400 font-bold mb-1">
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                      Response from AL KHALIL CYBER CENTRE:
-                    </div>
-                    <p className="text-slate-300 text-[11px] leading-relaxed">
-                      {test.responseFromAdmin}
-                    </p>
-                  </div>
+            {viewMode === 'carousel' && (
+              <button
+                type="button"
+                onClick={() => setIsAutoPlay(!isAutoPlay)}
+                className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                  isAutoPlay
+                    ? 'bg-emerald-950/50 border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/50'
+                    : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                }`}
+                title={isAutoPlay ? 'Click to Pause auto-slide' : 'Click to Resume auto-slide'}
+              >
+                {isAutoPlay ? (
+                  <>
+                    <Pause className="w-3 h-3 text-emerald-400" />
+                    <span>Auto-slide {isHovered ? '(Hover Paused)' : 'Active'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-3 h-3 text-amber-400" />
+                    <span>Auto-slide Paused</span>
+                  </>
                 )}
-              </div>
+              </button>
+            )}
+          </div>
 
-              {/* Author Info */}
-              <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-600 to-blue-700 text-white flex items-center justify-center font-bold text-sm shadow-md">
-                    {test.customerName.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <div className="font-bold text-white flex items-center gap-1">
-                      {test.customerName}
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" title="Verified Customer" />
-                    </div>
-                    <span className="text-slate-400 text-[11px] flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-slate-500" />
-                      {test.customerCity || 'Uttar Pradesh'}
-                    </span>
-                  </div>
-                </div>
+          {/* Right: Slide Counter & Prev/Next Arrows */}
+          {viewMode === 'carousel' && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-medium text-slate-400 hidden sm:inline-block">
+                Showing {currentIndex + 1}–{Math.min(currentIndex + itemsPerPage, approvedList.length)} of {approvedList.length}
+              </span>
 
-                <span className="text-slate-500 text-[11px]">
-                  {new Date(test.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={prevSlide}
+                  className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 shadow-md transition-all cursor-pointer"
+                  aria-label="Previous testimonial slide"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={nextSlide}
+                  className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 shadow-md transition-all cursor-pointer"
+                  aria-label="Next testimonial slide"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
-          ))}
+          )}
         </div>
+
+        {/* =========================================================================
+            HORIZONTAL SLIDING CAROUSEL (FRAMER-MOTION)
+        ========================================================================= */}
+        {viewMode === 'carousel' ? (
+          <div 
+            className="relative"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            {/* Viewport container with framer-motion drag and sliding track */}
+            <div className="relative overflow-hidden py-3 -mx-2 sm:-mx-3 px-1">
+              <motion.div
+                className="flex cursor-grab active:cursor-grabbing select-none"
+                animate={{
+                  x: `-${currentIndex * (100 / itemsPerPage)}%`
+                }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 240,
+                  damping: 26,
+                  mass: 0.85
+                }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.15}
+                onDragEnd={handleDragEnd}
+              >
+                {approvedList.map((test) => (
+                  <div
+                    key={test.id}
+                    style={{ width: `${100 / itemsPerPage}%` }}
+                    className="flex-shrink-0 px-2 sm:px-3"
+                  >
+                    {renderCard(test)}
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Auto-Rotation Animated Progress Countdown Bar */}
+            {isAutoPlay && maxIndex > 0 && (
+              <div className="mt-4 w-full max-w-md mx-auto bg-slate-800/60 h-1.5 rounded-full overflow-hidden shadow-inner">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 rounded-full"
+                  style={{ width: `${timerProgress}%` }}
+                  transition={{ ease: 'linear' }}
+                />
+              </div>
+            )}
+
+            {/* Pagination Dots with Active Layout Indicator */}
+            {maxIndex > 0 && (
+              <div className="flex items-center justify-center gap-2 mt-5">
+                {Array.from({ length: maxIndex + 1 }).map((_, idx) => {
+                  const isActive = currentIndex === idx;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setCurrentIndex(idx);
+                        setTimerProgress(0);
+                      }}
+                      className={`relative h-2.5 rounded-full transition-all cursor-pointer ${
+                        isActive
+                          ? 'w-8 bg-amber-400 shadow-sm shadow-amber-400/50'
+                          : 'w-2.5 bg-slate-700 hover:bg-slate-600'
+                      }`}
+                      aria-label={`Jump to slide ${idx + 1}`}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          /* =========================================================================
+              GRID VIEW FALLBACK (ALL REVIEWS)
+          ========================================================================= */
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {approvedList.map((test) => (
+              <div key={test.id}>
+                {renderCard(test)}
+              </div>
+            ))}
+          </motion.div>
+        )}
 
         {/* Write a Review Modal */}
         {isWriteModalOpen && (
@@ -434,3 +765,4 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
     </section>
   );
 };
+

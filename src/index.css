@@ -1,5 +1,95 @@
 @import "tailwindcss";
 
+/* =========================================================================
+   LIGHT & DARK THEME DESIGN TOKENS
+========================================================================= */
+html.light {
+  color-scheme: light;
+  --color-slate-950: #f1f5f9;
+  --color-slate-900: #ffffff;
+  --color-slate-850: #f8fafc;
+  --color-slate-800: #f8fafc;
+  --color-slate-700: #e2e8f0;
+  --color-slate-600: #cbd5e1;
+  --color-slate-500: #64748b;
+  --color-slate-400: #475569;
+  --color-slate-300: #334155;
+  --color-slate-200: #1e293b;
+  --color-slate-100: #0f172a;
+  --color-slate-50: #020617;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* Base body background & text in light mode */
+html.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Light mode card elevations & border definition */
+html.light .bg-slate-800,
+html.light .bg-slate-850,
+html.light .bg-slate-900 {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+}
+
+/* Light mode heading adjustments for text-white on neutral surfaces while preserving saturated button colors */
+html.light h1.text-white,
+html.light h2.text-white,
+html.light h3.text-white,
+html.light h4.text-white,
+html.light strong.text-white,
+html.light span.text-white:not(
+  button.bg-indigo-600 *,
+  button.bg-indigo-500 *,
+  button.bg-emerald-600 *,
+  button.bg-emerald-500 *,
+  button.bg-rose-600 *,
+  button.bg-rose-500 *,
+  button.bg-purple-600 *,
+  button.bg-purple-500 *,
+  button.bg-blue-600 *,
+  button.bg-amber-600 *,
+  button.bg-red-600 *,
+  a.bg-indigo-600 *,
+  a.bg-emerald-600 *,
+  a.bg-rose-600 *,
+  a.bg-purple-600 *,
+  [class*="bg-indigo-600"] *,
+  [class*="bg-emerald-600"] *,
+  [class*="bg-rose-600"] *,
+  [class*="bg-gradient-"] *
+) {
+  color: #0f172a;
+}
+
+/* Light mode form controls contrast */
+html.light input:not([type="checkbox"]):not([type="radio"]),
+html.light select,
+html.light textarea {
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* Light mode backdrop for modal overlays */
+html.light .fixed.inset-0.bg-slate-950\/80 {
+  background-color: rgb(15 23 42 / 0.45);
+}
+
+/* Smooth transition for theme switching */
+body, header, nav, footer, .theme-transition {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+}
+
 @keyframes marqueeScroll {
   0% {
     transform: translateX(0%);
@@ -20,4 +110,3 @@
 .group-marquee:hover .animate-marquee-smooth {
   animation-play-state: paused;
 }
-

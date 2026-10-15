@@ -11,7 +11,8 @@ import {
   ShieldAlert,
   ShieldCheck,
   ChevronRight,
-  X
+  X,
+  Truck
 } from 'lucide-react';
 import {
   SiteInfo,
@@ -50,28 +51,42 @@ import { Footer } from './components/Footer';
 import { AdminPanel } from './components/AdminPanel';
 import { ChatAssistant } from './components/ChatAssistant';
 import { CyberSafetyPage } from './components/CyberSafetyPage';
+import { AadhaarPickupDropModal } from './components/AadhaarPickupDropModal';
+import { HomePickupSection } from './components/HomePickupSection';
+import { HomePickupModal } from './components/HomePickupModal';
+import { useTheme } from './lib/theme';
+import { useLanguage, getLocalizedSiteInfo, getInitialLanguage } from './lib/language';
 
 export function App() {
+  const [language, toggleLanguage, t] = useLanguage();
+  const [rawSiteInfo, setRawSiteInfo] = useState<SiteInfo | null>(null);
+
   // Public Data State
-  const [siteInfo, setSiteInfo] = useState<SiteInfo>({
-    businessName: 'AL KHALIL CYBER CENTRE',
-    tagline: 'Digital Services • Jan Seva • Printing • 4K Photography & Videography',
-    phone: '9259837361',
-    whatsapp: '9259837361',
-    email: 'alkhalilcybercentre@gmail.com',
-    address: 'Near Main Market, Service Complex',
-    cityState: 'Uttar Pradesh',
-    pincode: '250002',
-    openingHours: 'Mon - Sat: 8:00 AM - 9:00 PM | Sun: 9:00 AM - 3:00 PM',
-    aboutText:
-      'AL KHALIL CYBER CENTRE is your authorized Jan Seva Kendra and premier digital solution studio offering instant government application processing, fast online certificates, commercial offset & digital printing, and cinematic 4K wedding photography & videography.',
-    aboutHighlights: [
-      'Authorized CSC Jan Seva Kendra with Verified Govt Portals',
-      'Real-Time Live Work Tracking Token System',
-      'High-Speed Color Laser Printing, Lamination & PVC Smart Cards',
-      'Cinema 4K Drone Wedding Photography & Video Editing'
-    ]
-  });
+  const [siteInfo, setSiteInfo] = useState<SiteInfo>(() =>
+    getLocalizedSiteInfo(
+      {
+        businessName: 'AL KHALIL CYBER CENTRE',
+        tagline: 'Digital Services • Jan Seva • Printing • 4K Photography & Videography',
+        phone: '9259837361',
+        whatsapp: '9259837361',
+        email: 'alkhalilcybercentre@gmail.com',
+        address: 'Near Main Market, Service Complex',
+        cityState: 'Uttar Pradesh',
+        pincode: '250002',
+        openingHours: 'Mon - Sat: 8:00 AM - 9:00 PM | Sun: 9:00 AM - 3:00 PM',
+        googleMapsUrl: 'https://maps.google.com/?q=Al+Khalil+Cyber+Centre',
+        aboutText:
+          'AL KHALIL CYBER CENTRE is your authorized Jan Seva Kendra and premier digital solution studio offering instant government application processing, fast online certificates, commercial offset & digital printing, and cinematic 4K wedding photography & videography.',
+        aboutHighlights: [
+          'Authorized CSC Jan Seva Kendra with Verified Govt Portals',
+          'Real-Time Live Work Tracking Token System',
+          'High-Speed Color Laser Printing, Lamination & PVC Smart Cards',
+          'Cinema 4K Drone Wedding Photography & Video Editing'
+        ]
+      },
+      getInitialLanguage()
+    )
+  );
 
   const [banners, setBanners] = useState<BannerItem[]>([]);
   const [news, setNews] = useState<FlashNewsItem[]>([]);
@@ -86,8 +101,10 @@ export function App() {
   const [showFirstVisitNotice, setShowFirstVisitNotice] = useState<boolean>(false);
   const [showAdminModal, setShowAdminModal] = useState<boolean>(false);
   const [selectedServiceModal, setSelectedServiceModal] = useState<ServiceItem | null>(null);
+  const [showPickupDropModal, setShowPickupDropModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
+  const [theme, toggleTheme] = useTheme();
 
   // Load Public Data
   const loadData = async () => {
@@ -102,7 +119,10 @@ export function App() {
         fetchTestimonials()
       ]);
 
-      if (info) setSiteInfo(info);
+      if (info) {
+        setRawSiteInfo(info);
+        setSiteInfo(getLocalizedSiteInfo(info, language));
+      }
       if (bannersData) setBanners(bannersData);
       if (newsData) setNews(newsData);
       if (servicesData) setServices(servicesData);
@@ -115,6 +135,11 @@ export function App() {
       setLoading(false);
     }
   };
+
+  // Synchronize site content state whenever language changes
+  useEffect(() => {
+    setSiteInfo((prev) => getLocalizedSiteInfo(rawSiteInfo || prev, language));
+  }, [language, rawSiteInfo]);
 
   useEffect(() => {
     loadData();
@@ -217,7 +242,9 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-900 text-slate-100 selection:bg-indigo-600 selection:text-white font-['Plus_Jakarta_Sans',sans-serif]">
+    <div className={`min-h-screen flex flex-col selection:bg-indigo-600 selection:text-white font-['Plus_Jakarta_Sans',sans-serif] transition-colors ${
+      theme === 'dark' ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'
+    }`}>
       {/* Emergency Alert Banner if Enabled in Admin Settings */}
       {siteInfo.enableEmergencyAlert && siteInfo.emergencyAlertText && (
         <div className="bg-gradient-to-r from-rose-600 to-amber-600 text-white px-4 py-2 text-xs font-black text-center flex items-center justify-center gap-2 shadow-lg tracking-wide uppercase">
@@ -232,6 +259,10 @@ export function App() {
         activeSection={currentView === 'cyber-safety' ? 'cyber-safety' : activeSection}
         onNavigate={handleNavigate}
         onOpenAdmin={() => setShowAdminModal(true)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        language={language}
+        onToggleLanguage={toggleLanguage}
       />
 
       {/* 2. Real-Time Flash News Ticker */}
@@ -258,6 +289,14 @@ export function App() {
           {/* 3. Dynamic Hero Highlights Slider */}
           <div id="home">
             <HeroSlider banners={banners} onNavigate={handleNavigate} />
+            {/* Home Pickup & Drop Modal accessible within #home */}
+            <HomePickupModal
+              isOpen={showPickupDropModal}
+              onClose={() => setShowPickupDropModal(false)}
+              siteInfo={siteInfo}
+              onNavigateToTrack={scrollToTrackWithToken}
+              onSuccess={loadData}
+            />
           </div>
 
           {/* 3.2. Homepage Cyber Fraud Safety Awareness Alert Card/Banner */}
@@ -271,15 +310,17 @@ export function App() {
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-black text-amber-400 text-sm tracking-wide flex items-center gap-1.5">
-                        🛡️ साइबर फ्रॉड से सावधान रहें
+                        🛡️ {t.safetyBanner.title}
                       </span>
                       <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                        जनहित में जारी
+                        {t.safetyBanner.badge}
                       </span>
                     </div>
                     <p className="text-xs text-slate-300 mt-1 leading-relaxed font-medium">
                       {siteInfo.safetyNoticeText ||
-                        'OTP, UPI PIN, ATM PIN, Banking Password, Card PIN या CVV का गलत इस्तेमाल करके धोखाधड़ी की जा सकती है।'}
+                        (language === 'hi'
+                          ? 'OTP, UPI PIN, ATM PIN, Banking Password, Card PIN या CVV का गलत इस्तेमाल करके धोखाधड़ी की जा सकती है।'
+                          : 'Beware of cyber fraud! Never share OTP, UPI PIN, ATM PIN, Banking Password, or CVV with anyone.')}
                     </p>
                   </div>
                 </div>
@@ -294,7 +335,7 @@ export function App() {
                     className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-amber-600/20 transition-all cursor-pointer hover:scale-105 active:scale-95"
                   >
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Cyber Safety Tips देखें</span>
+                    <span>{t.safetyBanner.button}</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -306,6 +347,13 @@ export function App() {
           <NoticeBoard
             notices={notices}
             onActionClick={handleNavigate}
+          />
+
+          {/* 3.8. Homepage Featured Section: Home Pickup & Drop Service (Senior Citizen FREE) */}
+          <HomePickupSection
+            siteInfo={siteInfo}
+            onRequestPickup={() => setShowPickupDropModal(true)}
+            onNavigateService={(code) => handleNavigate('services')}
           />
 
           {/* 4. Key Highlighted Services */}
@@ -325,6 +373,7 @@ export function App() {
             siteInfo={siteInfo}
             selectedServiceModal={selectedServiceModal}
             onSelectServiceModal={setSelectedServiceModal}
+            onOpenPickupDrop={() => setShowPickupDropModal(true)}
           />
 
           {/* 6. Official Rate List & Price Chart */}
@@ -371,6 +420,16 @@ export function App() {
           FLOATING QUICK-ACTION HUB (CALL NOW + WHATSAPP ON LEFT)
       ========================================================================= */}
       <div className="fixed bottom-5 left-4 sm:left-6 z-40 flex flex-col items-start gap-2.5">
+        {/* Floating Pickup & Drop Facility Button */}
+        <button
+          onClick={() => setShowPickupDropModal(true)}
+          className="flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 hover:from-amber-500 hover:to-orange-500 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all font-black text-xs uppercase tracking-wider border border-amber-400/40 cursor-pointer"
+          title="Aadhaar Pickup & Drop Facility"
+        >
+          <Truck className="w-4 h-4 text-white" />
+          <span className="hidden sm:inline">{t.cta.pickupDrop}</span>
+        </button>
+
         {/* Floating Call Button */}
         <a
           href={`tel:${siteInfo.phone}`}
@@ -378,7 +437,7 @@ export function App() {
           title={`Call ${siteInfo.phone}`}
         >
           <Phone className="w-4 h-4" />
-          <span className="hidden sm:inline">CALL {siteInfo.phone}</span>
+          <span className="hidden sm:inline">{t.topBar.callNow} {siteInfo.phone}</span>
         </a>
 
         {/* Floating WhatsApp Button */}
@@ -390,7 +449,7 @@ export function App() {
           title="Chat on WhatsApp"
         >
           <MessageCircle className="w-4 h-4" />
-          <span className="hidden sm:inline">WHATSAPP</span>
+          <span className="hidden sm:inline">{t.topBar.whatsapp}</span>
         </a>
       </div>
 
@@ -456,6 +515,7 @@ export function App() {
           </div>
         </div>
       )}
+
 
       {/* =========================================================================
           ADMIN PANEL MODAL OVERLAY (PIN AUTHENTICATED)

@@ -57,6 +57,11 @@ export interface SiteInfo {
   otpVerificationPhone?: string;
   safetyNoticeText?: string;
   showCyberSafetyBanner?: boolean;
+
+  // Emergency Alert Banner & Language
+  enableEmergencyAlert?: boolean;
+  emergencyAlertText?: string;
+  language?: 'en' | 'hi';
 }
 
 export interface NoticeItem {
@@ -151,6 +156,8 @@ export interface ServiceItem {
   id: string;
   serviceCode?: string;
   category: string;
+  subcategory?: string;
+  imageUrl?: string;
   title: string;
   shortDescription: string;
   fullDescription: string;
@@ -318,4 +325,28 @@ export interface ImageToVideoStatusResponse {
   videoUri?: string;
   error?: string;
 }
+
+export type PickupStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
+export type PickupPriority = 'HIGH' | 'NORMAL';
+
+export interface HomePickupRequest {
+  id: string;
+  requestId: string;
+  customerName: string;
+  mobile: string;
+  address: string;
+  villageArea: string;
+  requiredService: string;
+  preferredDate?: string;
+  preferredTime?: string;
+  seniorCitizen: boolean;
+  specialRequirement?: string;
+  status: PickupStatus;
+  priority: PickupPriority;
+  aiVoiceAudioUrl?: string;
+  aiVoiceText?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 

@@ -22,7 +22,8 @@ import {
   SUPPORTED_AI_VOICES,
   startImageToVideo,
   checkVideoStatus,
-  fetchVideoBuffer
+  fetchVideoBuffer,
+  generateFollowUpSpeech
 } from './server/ai.ts';
 
 dotenv.config();
@@ -199,9 +200,11 @@ export const requireAdminAuth = (req: Request, res: Response, next: NextFunction
   let token = '';
 
   if (authHeader && authHeader.startsWith('Bearer ')) {
-    token = authHeader.substring(7);
+    token = authHeader.substring(7).trim();
   } else if (authHeader) {
-    token = authHeader;
+    token = String(authHeader).trim();
+  } else if (req.query.token && typeof req.query.token === 'string') {
+    token = req.query.token.trim();
   }
 
   if (!token) {
@@ -672,6 +675,51 @@ async function startServer() {
       });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
+    }
+  });
+
+  // Customer Home Pickup & Drop Request
+  app.post('/api/home-pickup-requests', (req, res) => {
+    try {
+      const {
+        customerName,
+        mobile,
+        address,
+        villageArea,
+        requiredService,
+        preferredDate,
+        preferredTime,
+        seniorCitizen,
+        specialRequirement
+      } = req.body;
+
+      if (!customerName || !mobile || !address || !villageArea || !requiredService) {
+        return res.status(400).json({
+          success: false,
+          error: 'Please fill in all required fields: Customer Name, Mobile Number, Full Address, Village/Area, and Required Service.'
+        });
+      }
+
+      const record = db.addHomePickupRequest({
+        customerName,
+        mobile,
+        address,
+        villageArea,
+        requiredService,
+        preferredDate,
+        preferredTime,
+        seniorCitizen: Boolean(seniorCitizen),
+        specialRequirement
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'आपकी Pickup Request हमें मिल गई है। हमारी टीम जल्द ही आपसे संपर्क करके Pickup की उपलब्धता और समय confirm करेगी।',
+        requestId: record.requestId,
+        data: record
+      });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
     }
   });
 
@@ -1376,6 +1424,19 @@ async function startServer() {
     }
   });
 
+  // Service Custom Image / Visual Upload
+  app.post('/api/admin/upload-service-image', requireAdminAuth, uploadBanner.single('image'), (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No service image file uploaded.' });
+      }
+      const imageUrl = `/uploads/banners/${req.file.filename}`;
+      res.json({ success: true, imageUrl });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   app.post('/api/admin/banners', requireAdminAuth, (req, res) => {
     try {
       const saved = db.saveBanner(req.body);
@@ -1666,23 +1727,37 @@ async function startServer() {
     }
   });
 
-  // Secure File Download for Admin ONLY
-  app.get('/api/admin/documents/:id/download', requireAdminAuth, (req, res) => {
+  // Secure File Download, View, and Preview for Admin ONLY
+  const handleDocumentAccess = (req: Request, res: Response) => {
     try {
       const doc = db.getDocumentById(req.params.id);
       if (!doc || !doc.filePath || !fs.existsSync(doc.filePath)) {
-        return res.status(404).json({ error: 'Document file not found on server storage.' });
+        return res.status(404).json({ error: 'Document not found on secure storage.' });
       }
 
-      res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(doc.originalName)}"`);
+      const isDownload =
+        req.query.download === 'true' ||
+        req.query.download === '1' ||
+        (req.path.endsWith('/download') && req.query.download !== 'false');
+
+      const disposition = isDownload ? 'attachment' : 'inline';
+      const cleanFilename = (doc.originalName || `document-${doc.id}`).replace(/["\r\n]/g, '_');
+      const encodedFilename = encodeURIComponent(cleanFilename);
+
+      res.setHeader('Content-Disposition', `${disposition}; filename="${cleanFilename}"; filename*=UTF-8''${encodedFilename}`);
       res.setHeader('Content-Type', doc.mimeType || 'application/octet-stream');
-      
+      res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+
       const fileStream = fs.createReadStream(doc.filePath);
       fileStream.pipe(res);
     } catch (e: any) {
       res.status(500).json({ error: e.message });
     }
-  });
+  };
+
+  app.get('/api/admin/documents/:id/download', requireAdminAuth, handleDocumentAccess);
+  app.get('/api/admin/documents/:id/view', requireAdminAuth, handleDocumentAccess);
+  app.get('/api/admin/documents/:id/preview', requireAdminAuth, handleDocumentAccess);
 
   app.patch('/api/admin/documents/:id/status', requireAdminAuth, (req, res) => {
     try {
@@ -1728,6 +1803,75 @@ async function startServer() {
       res.json({ success });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
+    }
+  });
+
+  // ==========================================
+  // ADMIN HOME PICKUP & DROP MANAGEMENT
+  // ==========================================
+  app.get('/api/admin/home-pickup-requests', requireAdminAuth, (req, res) => {
+    try {
+      const requests = db.getHomePickupRequests();
+      res.json({ success: true, data: requests });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.patch('/api/admin/home-pickup-requests/:id/status', requireAdminAuth, (req, res) => {
+    try {
+      const { status } = req.body;
+      const updated = db.updateHomePickupRequestStatus(req.params.id, status);
+      if (!updated) {
+        return res.status(404).json({ success: false, error: 'Pickup request not found.' });
+      }
+      res.json({ success: true, data: updated, message: `Status updated to ${status}.` });
+    } catch (e: any) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  app.delete('/api/admin/home-pickup-requests/:id', requireAdminAuth, (req, res) => {
+    try {
+      const deleted = db.deleteHomePickupRequest(req.params.id);
+      res.json({ success: deleted, message: deleted ? 'Pickup request deleted.' : 'Request not found.' });
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
+  app.post('/api/admin/home-pickup-requests/:id/generate-voice', requireAdminAuth, async (req, res) => {
+    try {
+      const request = db.getHomePickupRequestById(req.params.id);
+      if (!request) {
+        return res.status(404).json({ success: false, error: 'Pickup request not found.' });
+      }
+
+      const { customText, voice } = req.body;
+      const customerHonorific = request.customerName ? `${request.customerName} जी` : 'ग्राहक जी';
+
+      const speechText = customText && typeof customText === 'string' && customText.trim()
+        ? customText.trim()
+        : `नमस्ते ${customerHonorific}, Al Khalil Cyber Centre से बात कर रहे हैं। आपने Home Pickup and Drop Service के लिए request भेजी थी। आपकी request हमें मिल गई है। Pickup के समय और आपके काम की जानकारी confirm करने के लिए हम आपसे संपर्क कर रहे हैं। धन्यवाद।`;
+
+      const speechResult = await generateFollowUpSpeech(speechText, voice || 'Kore');
+
+      const dataUri = `data:${speechResult.mimeType};base64,${speechResult.audioBase64}`;
+      db.saveHomePickupVoiceAudio(request.id, dataUri, speechText);
+
+      res.json({
+        success: true,
+        text: speechText,
+        audioBase64: speechResult.audioBase64,
+        audioUrl: dataUri,
+        mimeType: speechResult.mimeType
+      });
+    } catch (e: any) {
+      console.error('Error generating follow-up voice speech:', e);
+      res.status(500).json({
+        success: false,
+        error: e.message || 'Failed to synthesize AI follow-up speech.'
+      });
     }
   });
 
