@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   Phone,
   MessageCircle,
@@ -157,24 +158,42 @@ export function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Hash listener for direct #cyber-safety URL navigation
+  // Hash listener for direct anchor navigation (#services, #rates, #track, #about, #contact, #cyber-safety)
   useEffect(() => {
-    if (window.location.hash === '#cyber-safety') {
-      setCurrentView('cyber-safety');
-    }
+    const handleInitialHash = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'cyber-safety') {
+        setCurrentView('cyber-safety');
+      } else if (hash && hash !== 'home') {
+        setTimeout(() => {
+          scrollToSection(hash);
+        }, 350);
+      }
+    };
+
+    handleInitialHash();
 
     const handleHashChange = () => {
-      if (window.location.hash === '#cyber-safety') {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'cyber-safety') {
         setCurrentView('cyber-safety');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else if (window.location.hash === '' || window.location.hash === '#home') {
+      } else if (hash === '' || hash === 'home') {
         setCurrentView('home');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (hash) {
+        if (currentView !== 'home') {
+          setCurrentView('home');
+          setTimeout(() => scrollToSection(hash), 150);
+        } else {
+          scrollToSection(hash);
+        }
       }
     };
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [currentView]);
 
   // First-visit safety awareness notice check (once per browser)
   useEffect(() => {
@@ -203,7 +222,13 @@ export function App() {
 
     const elem = document.getElementById(id);
     if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth' });
+      const header = document.querySelector('header');
+      const headerHeight = header ? header.getBoundingClientRect().height : 96;
+      const elementPosition = elem.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: Math.max(0, elementPosition - headerHeight - 14),
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -222,7 +247,7 @@ export function App() {
       }
       setTimeout(() => {
         scrollToSection(id);
-      }, 100);
+      }, 120);
       return;
     }
 
@@ -430,27 +455,108 @@ export function App() {
           <span className="hidden sm:inline">{t.cta.pickupDrop}</span>
         </button>
 
-        {/* Floating Call Button */}
-        <a
+        {/* Floating Call Button with Framer Motion Pulse */}
+        <motion.a
           href={`tel:${siteInfo.phone}`}
-          className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all font-black text-xs uppercase tracking-wider group border border-indigo-400/30"
+          className="relative isolate flex items-center gap-2 px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-600/30 font-black text-xs uppercase tracking-wider group border border-indigo-400/40 cursor-pointer"
           title={`Call ${siteInfo.phone}`}
+          aria-label={`${t.topBar.callNow} ${siteInfo.phone}`}
+          animate={{
+            scale: [1, 1.04, 1],
+          }}
+          transition={{
+            duration: 2.6,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.94 }}
         >
-          <Phone className="w-4 h-4" />
-          <span className="hidden sm:inline">{t.topBar.callNow} {siteInfo.phone}</span>
-        </a>
+          {/* Subtle radiating radar pulse beacon ring */}
+          <motion.span
+            aria-hidden="true"
+            className="absolute inset-0 rounded-full bg-indigo-500/40 pointer-events-none -z-10"
+            animate={{
+              scale: [1, 1.35],
+              opacity: [0.75, 0],
+            }}
+            transition={{
+              duration: 2.6,
+              repeat: Infinity,
+              ease: 'easeOut',
+            }}
+          />
 
-        {/* Floating WhatsApp Button */}
-        <a
+          <motion.div
+            animate={{
+              rotate: [0, -12, 12, -8, 8, 0],
+              scale: [1, 1.15, 1],
+            }}
+            transition={{
+              duration: 1.2,
+              repeat: Infinity,
+              repeatDelay: 2.4,
+              ease: 'easeInOut',
+            }}
+          >
+            <Phone className="w-4 h-4 text-white" />
+          </motion.div>
+          <span className="hidden sm:inline">{t.topBar.callNow} {siteInfo.phone}</span>
+        </motion.a>
+
+        {/* Floating WhatsApp Button with Framer Motion Pulse */}
+        <motion.a
           href={`https://wa.me/91${siteInfo.whatsapp.replace(/\D/g, '')}?text=Hello%20AL%20KHALIL%20CYBER%20CENTRE,%20I%20have%20an%20inquiry.`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all font-black text-xs uppercase tracking-wider border border-emerald-400/30"
+          className="relative isolate flex items-center gap-2 px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-xl shadow-emerald-600/30 font-black text-xs uppercase tracking-wider group border border-emerald-400/40 cursor-pointer"
           title="Chat on WhatsApp"
+          aria-label={t.topBar.whatsapp}
+          animate={{
+            scale: [1, 1.04, 1],
+          }}
+          transition={{
+            duration: 2.6,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: 1.3,
+          }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.94 }}
         >
-          <MessageCircle className="w-4 h-4" />
+          {/* Subtle radiating radar pulse beacon ring */}
+          <motion.span
+            aria-hidden="true"
+            className="absolute inset-0 rounded-full bg-emerald-500/40 pointer-events-none -z-10"
+            animate={{
+              scale: [1, 1.35],
+              opacity: [0.75, 0],
+            }}
+            transition={{
+              duration: 2.6,
+              repeat: Infinity,
+              ease: 'easeOut',
+              delay: 1.3,
+            }}
+          />
+
+          <motion.div
+            animate={{
+              scale: [1, 1.18, 1],
+              rotate: [0, -10, 10, 0],
+            }}
+            transition={{
+              duration: 1.2,
+              repeat: Infinity,
+              repeatDelay: 2.4,
+              ease: 'easeInOut',
+              delay: 1.3,
+            }}
+          >
+            <MessageCircle className="w-4 h-4 text-white" />
+          </motion.div>
           <span className="hidden sm:inline">{t.topBar.whatsapp}</span>
-        </a>
+        </motion.a>
       </div>
 
       {/* Back to top button */}

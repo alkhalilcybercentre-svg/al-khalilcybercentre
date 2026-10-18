@@ -3,6 +3,10 @@
 /* =========================================================================
    LIGHT & DARK THEME DESIGN TOKENS
 ========================================================================= */
+html {
+  scroll-behavior: smooth;
+}
+
 html.light {
   color-scheme: light;
   --color-slate-950: #f1f5f9;

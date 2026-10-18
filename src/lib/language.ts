@@ -95,6 +95,8 @@ export const TRANSLATIONS = {
       cyberSafety: 'Cyber Safety',
       about: 'About Us',
       contact: 'Contact',
+      more: 'More Portals',
+      keySections: 'Key Sections',
     },
     topBar: {
       officialSupport: 'Official Support',
@@ -148,6 +150,8 @@ export const TRANSLATIONS = {
       cyberSafety: 'साइबर सुरक्षा',
       about: 'हमारे बारे में',
       contact: 'संपर्क करें',
+      more: 'अन्य पोर्टल',
+      keySections: 'मुख्य अनुभाग',
     },
     topBar: {
       officialSupport: 'आधिकारिक सहायता',
